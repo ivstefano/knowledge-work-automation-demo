@@ -470,13 +470,9 @@ export class CopilotComponent {
   }
 
   // Analysis
-  setFeedback(flag: Flag, fb: 'agreed' | 'dismissed' | 'skipped') {
-    flag.feedback = fb;
-    if (fb === 'dismissed') flag.escalate = false;
-  }
   toggleFeedback(flag: Flag, fb: 'agreed' | 'dismissed' | 'skipped') {
     flag.feedback = flag.feedback === fb ? 'pending' : fb;
-    flag.escalate = flag.feedback !== 'dismissed';
+    flag.escalate = flag.feedback === 'agreed';
   }
 
   // Escalation
@@ -504,6 +500,6 @@ export class CopilotComponent {
   barWidth(correct: number, total: number): number { return (correct / total) * 100; }
   grayWidth(correct: number, total: number): number { return ((total - correct) / total) * 100; }
   flagsByContract(name: string): Flag[] {
-    return this.flags.filter(f => f.contractName === name && f.escalate && f.feedback !== 'dismissed');
+    return this.escalatableFlags.filter(f => f.contractName === name);
   }
 }

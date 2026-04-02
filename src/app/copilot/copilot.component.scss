@@ -146,7 +146,7 @@ $rs: 8px;
 .file-count { font-size:11px; color:$t3; margin-top:6px; font-weight:600; }
 
 /* Source cards */
-.source-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+.source-cards { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px; }
 .source-card {
   display:flex; flex-direction:column; align-items:center; gap:6px;
   padding:18px 12px; background:$s1; border:1px solid $b1; border-radius:$rs;

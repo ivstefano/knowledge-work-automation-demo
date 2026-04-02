@@ -41,7 +41,6 @@ interface AuditEntry { time: string; text: string; }
 interface UploadedFile {
   name: string;
   selected: boolean;
-  flagCount: number;
   type: 'contract' | 'regulation' | 'registry';
   pdfPath?: string;
   previewText: string;
@@ -88,12 +87,12 @@ export class CopilotComponent {
   // ── Upload ──
   dragOver = false;
   uploadedFiles: UploadedFile[] = [
-    { name: 'DLC-2026-Alpha.pdf', selected: true, flagCount: 4, type: 'contract', previewText: 'Draft Digital Lending Contract — Decentralized Peer-to-Peer Loan Agreement between Borrower Alpha (0x4fA6...B1cE) and Lender Omega (0x9eD5...C8fF). Principal: 10,000 USDC, Term: 180 Days, Collateral: 5 ETH.' },
-    { name: 'SDALP-v2.1-2026.pdf', selected: true, flagCount: 0, type: 'regulation', previewText: 'Standardized Digital Asset Lending Protocol v2.1 — Industry standard for DeFi lending contracts covering interest rate transparency, liquidation procedures, collateral requirements, and audit obligations.' },
-    { name: 'vendor_registry.xlsx', selected: true, flagCount: 0, type: 'registry', previewText: 'Vendor registry containing counterparty details: Borrower Alpha (High risk), Lender Omega (Medium risk), Liquidation Agent (Low risk).' },
+    { name: 'DLC-2026-Alpha.pdf', selected: true, type: 'contract', previewText: 'Draft Digital Lending Contract — Decentralized Peer-to-Peer Loan Agreement between Borrower Alpha (0x4fA6...B1cE) and Lender Omega (0x9eD5...C8fF). Principal: 10,000 USDC, Term: 180 Days, Collateral: 5 ETH.' },
+    { name: 'SDALP-v2.1-2026.pdf', selected: true, type: 'regulation', previewText: 'Standardized Digital Asset Lending Protocol v2.1 — Industry standard for DeFi lending contracts covering interest rate transparency, liquidation procedures, collateral requirements, and audit obligations.' },
+    { name: 'vendor_registry.xlsx', selected: true, type: 'registry', previewText: 'Vendor registry containing counterparty details: Borrower Alpha (High risk), Lender Omega (Medium risk), Liquidation Agent (Low risk).' },
   ];
   previewFile: UploadedFile | null = null;
-  ruleSource: 'database' | 'upload' | 'manual' = 'database';
+  ruleSource: 'database' | 'upload' = 'database';
   regulationSearch = '';
   regulations: Regulation[] = [
     { id: 'SDALP', label: 'SDALP', description: 'Standardized Digital Asset Lending Protocol', selected: true, autoSuggested: true },
@@ -304,14 +303,26 @@ export class CopilotComponent {
   escalationComment = '';
   escalationSent = false;
 
-  auditTrail: AuditEntry[] = [
-    { time: '14:32', text: 'DLC-2026-Alpha.pdf + SDALP-v2.1-2026.pdf uploaded' },
-    { time: '14:33', text: 'SDALP selected as primary regulatory source' },
-    { time: '14:33', text: '5 compliance rules loaded (1 custom), all active' },
-    { time: '14:34', text: 'Analysis complete — 5 findings flagged in DLC-2026-Alpha' },
-    { time: '14:35', text: 'User agreed with Flag 1, 2, 3, 4. Dismissed Flag 5.' },
-    { time: '14:36', text: 'Escalation initiated to Legal / Compliance Team' },
-  ];
+  get auditTrail(): AuditEntry[] {
+    const agreed = this.filteredFlags.filter(f => f.feedback === 'agreed');
+    const dismissed = this.filteredFlags.filter(f => f.feedback === 'dismissed');
+    const entries: AuditEntry[] = [
+      { time: '14:32', text: `${this.uploadedFiles.map(f => f.name).join(' + ')} uploaded` },
+      { time: '14:33', text: `${this.regulations.filter(r => r.selected).map(r => r.label).join(', ')} selected as regulatory sources` },
+      { time: '14:33', text: `${this.rules.length} compliance rules loaded (${this.rules.filter(r => r.id.startsWith('CUST-')).length} custom), ${this.activeRuleCount} active` },
+      { time: '14:34', text: `Analysis complete — ${this.flags.length} findings flagged (${this.filteredFlags.length} above risk threshold)` },
+    ];
+    if (agreed.length > 0 || dismissed.length > 0) {
+      const parts: string[] = [];
+      if (agreed.length > 0) parts.push(`Agreed: ${agreed.map(f => f.id).join(', ')}`);
+      if (dismissed.length > 0) parts.push(`Dismissed: ${dismissed.map(f => f.id).join(', ')}`);
+      entries.push({ time: '14:35', text: parts.join(' · ') });
+    }
+    if (this.escalationSent) {
+      entries.push({ time: '14:36', text: `Escalation sent to ${this.escalationTeams.filter(t => t.selected).map(t => t.name).join(', ')}` });
+    }
+    return entries;
+  }
 
   get escalatableFlags(): Flag[] { return this.filteredFlags.filter(f => f.escalate && f.feedback === 'agreed'); }
   get flaggedFiles(): UploadedFile[] {
@@ -377,7 +388,7 @@ export class CopilotComponent {
   }
 
   // ── Analysis contract selector ──
-  selectedContractView = 'DLC-2026-Alpha.pdf';
+  selectedContractView = 'all';
 
   // ── Computed ──
   get activeRuleCount(): number { return this.rules.filter(r => r.active).length; }
@@ -462,8 +473,7 @@ export class CopilotComponent {
   addFiles(names: string[]) {
     for (const n of names) {
       if (!this.uploadedFiles.find(f => f.name === n)) {
-        const flagCount = this.flags.filter(f => f.contractName === n).length;
-        this.uploadedFiles.push({ name: n, selected: true, flagCount, type: 'contract', previewText: '' });
+        this.uploadedFiles.push({ name: n, selected: true, type: 'contract', previewText: '' });
       }
     }
   }
@@ -473,7 +483,7 @@ export class CopilotComponent {
   onFileDrop(e: DragEvent) {
     e.preventDefault();
     this.dragOver = false;
-    this.addFiles(['DLC-2026-Alpha.pdf', 'SDALP-v2.1-2026.pdf']);
+    this.addFiles(['DLC-2026-Alpha.pdf', 'SDALP-v2.1-2026.pdf', 'vendor_registry.xlsx']);
   }
   onDragOver(e: DragEvent) { e.preventDefault(); this.dragOver = true; }
   onDragLeave() { this.dragOver = false; }

@@ -326,41 +326,53 @@
             <!-- Risk banner -->
             <div class="risk-banner">
               <span class="risk-amount">{{ totalRisk }}</span>
-              <span class="risk-sub">Total Potential Risk — {{ escalatableFlags.length }} violations across {{ selectedContracts.length }} contracts × €7M per incident</span>
+              <span class="risk-sub">Total Potential Risk — {{ escalatableFlags.length }} violations across {{ selectedEscalationFiles.length }} contracts × €7M per incident</span>
             </div>
 
             <div class="esc-form">
+              <!-- Responsible teams multiselect -->
               <div class="esc-field">
-                <label>TO: RESPONSIBLE TEAM</label>
-                <div class="esc-select">{{ escalationTeam }}</div>
+                <label>TO: RESPONSIBLE TEAMS</label>
+                <div class="esc-contracts">
+                  @for (team of escalationTeams; track team.name) {
+                    <label class="esc-contract-row" (click)="team.selected = !team.selected; $event.preventDefault()">
+                      <span class="custom-check" [class.checked]="team.selected">
+                        <span class="material-symbols-rounded">{{ team.selected ? 'check_box' : 'check_box_outline_blank' }}</span>
+                      </span>
+                      <span class="material-symbols-rounded" style="font-size:18px; color:#7c7c96">group</span>
+                      <span class="esc-contract-name">{{ team.name }}</span>
+                    </label>
+                  }
+                </div>
+                <span class="esc-contract-count">{{ selectedTeamCount }} team(s) selected</span>
               </div>
 
-              <!-- Multi-contract attachment -->
+              <!-- Attach only flagged contracts -->
               <div class="esc-field">
                 <label>ATTACH CONTRACTS</label>
                 <div class="esc-contracts">
-                  @for (file of uploadedFiles; track file.name) {
-                    <label class="esc-contract-row" (click)="file.selected = !file.selected">
+                  @for (file of flaggedFiles; track file.name) {
+                    <label class="esc-contract-row" (click)="file.selected = !file.selected; $event.preventDefault()">
                       <span class="custom-check" [class.checked]="file.selected">
                         <span class="material-symbols-rounded">{{ file.selected ? 'check_box' : 'check_box_outline_blank' }}</span>
                       </span>
                       <span class="material-symbols-rounded" style="font-size:18px; color:#7c7c96">description</span>
                       <span class="esc-contract-name">{{ file.name }}</span>
-                      <span class="esc-contract-flags">{{ file.flagCount }} flags</span>
+                      <span class="esc-contract-flags">{{ flagCountForFile(file.name) }} flags</span>
                     </label>
                   }
                 </div>
-                <span class="esc-contract-count">{{ selectedContracts.length }} of {{ uploadedFiles.length }} files selected</span>
+                <span class="esc-contract-count">{{ selectedEscalationFiles.length }} of {{ flaggedFiles.length }} flagged files attached</span>
               </div>
 
               <!-- Flags grouped by contract -->
               <div class="esc-field">
-                <label>FLAGGED VIOLATIONS</label>
+                <label>FLAGGED VIOLATIONS ({{ escalatableFlags.length }})</label>
                 <div class="esc-flags">
                   @for (name of contractNames; track name) {
                     <div class="esc-group-header">{{ name }}</div>
                     @for (f of flagsByContract(name); track f.id) {
-                      <label class="esc-flag-row" (click)="f.escalate = !f.escalate">
+                      <label class="esc-flag-row" (click)="f.escalate = !f.escalate; $event.preventDefault()">
                         <span class="custom-check" [class.checked]="f.escalate">
                           <span class="material-symbols-rounded">{{ f.escalate ? 'check_box' : 'check_box_outline_blank' }}</span>
                         </span>
@@ -377,7 +389,7 @@
                 <textarea class="esc-textarea" rows="3" placeholder="Add notes for the compliance team…" [(ngModel)]="escalationComment"></textarea>
               </div>
               <div class="esc-buttons">
-                <button class="btn-red" (click)="sendEscalation()">SEND ESCALATION EMAIL</button>
+                <button class="btn-red" [disabled]="!canSendEscalation" (click)="sendEscalation()">SEND ESCALATION EMAIL</button>
                 <button class="btn-outline">EXPORT PDF REPORT</button>
               </div>
             </div>
@@ -398,7 +410,7 @@
             <div class="esc-success">
               <span class="material-symbols-rounded success-icon">check_circle</span>
               <h3>Escalation Sent Successfully</h3>
-              <p>The compliance team has been notified about {{ escalatableFlags.length }} issues across {{ selectedContracts.length }} contracts.</p>
+              <p>The compliance team has been notified about {{ escalatableFlags.length }} issues across {{ selectedEscalationFiles.length }} contracts.</p>
               <button class="btn-dark" (click)="nextStep()">NEXT: EVALUATION →</button>
             </div>
           }

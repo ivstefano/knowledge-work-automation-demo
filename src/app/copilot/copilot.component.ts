@@ -295,7 +295,12 @@ export class CopilotComponent {
   }
 
   // ── Escalation ──
-  escalationTeam = 'Legal / Compliance Team — John Smith';
+  escalationTeams = [
+    { name: 'Legal / Compliance — John Smith', selected: true },
+    { name: 'DeFi Risk — Sarah Chen', selected: false },
+    { name: 'Smart Contract Ops — Mike Chen', selected: false },
+    { name: 'Executive Risk Committee', selected: false },
+  ];
   escalationComment = '';
   escalationSent = false;
 
@@ -308,14 +313,22 @@ export class CopilotComponent {
     { time: '14:36', text: 'Escalation initiated to Legal / Compliance Team' },
   ];
 
-  get escalatableFlags(): Flag[] { return this.flags.filter(f => f.escalate && f.feedback !== 'dismissed'); }
-  get selectedContracts(): UploadedFile[] { return this.uploadedFiles.filter(f => f.selected); }
+  get escalatableFlags(): Flag[] { return this.filteredFlags.filter(f => f.escalate && f.feedback === 'agreed'); }
+  get flaggedFiles(): UploadedFile[] {
+    const names = new Set(this.filteredFlags.filter(f => f.feedback === 'agreed').map(f => f.contractName));
+    return this.uploadedFiles.filter(f => names.has(f.name));
+  }
+  get selectedEscalationFiles(): UploadedFile[] { return this.flaggedFiles.filter(f => f.selected); }
   get totalRisk(): string {
     const count = this.escalatableFlags.length;
     return '€' + (count * 7).toLocaleString() + ',000,000';
   }
   get contractNames(): string[] {
     return [...new Set(this.escalatableFlags.map(f => f.contractName))];
+  }
+  get selectedTeamCount(): number { return this.escalationTeams.filter(t => t.selected).length; }
+  get canSendEscalation(): boolean {
+    return this.selectedEscalationFiles.length > 0 && this.escalatableFlags.length > 0 && this.selectedTeamCount > 0;
   }
 
   // ── Evaluation ──

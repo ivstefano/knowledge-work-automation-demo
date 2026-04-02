@@ -218,11 +218,12 @@
       <!-- Contract selector tabs -->
       <div class="contract-tabs">
         <button class="ct-tab" [class.active]="selectedContractView === 'all'" (click)="selectedContractView = 'all'">
-          All Contracts ({{ filteredFlags.length }})
+          All Documents ({{ filteredFlags.length }})
         </button>
-        @for (name of uniqueContractNames; track name) {
-          <button class="ct-tab" [class.active]="selectedContractView === name" (click)="selectedContractView = name">
-            {{ name }}
+        @for (file of uploadedFiles; track file.name) {
+          <button class="ct-tab" [class.active]="selectedContractView === file.name" (click)="selectedContractView = file.name">
+            {{ file.name }}
+            <span class="ct-count">({{ flagCountForFile(file.name) }})</span>
           </button>
         }
       </div>
@@ -292,7 +293,8 @@
         </div>
       </div>
       <div class="step-footer-right">
-        <button class="btn-dark" (click)="nextStep()">NEXT: ESCALATION →</button>
+        <span class="review-progress">{{ reviewedFlagCount }}/{{ filteredFlags.length }} reviewed</span>
+        <button class="btn-dark" [disabled]="!allFlagsReviewed" (click)="nextStep()">NEXT: ESCALATION →</button>
       </div>
     </div>
     }

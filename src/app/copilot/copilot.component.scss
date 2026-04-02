@@ -73,7 +73,8 @@ $rs: 8px;
 
 .content { min-height:480px; }
 .step-center { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:400px; text-align:center; }
-.step-footer-right { display:flex; justify-content:flex-end; gap:12px; margin-top:28px; }
+.step-footer-right { display:flex; justify-content:flex-end; align-items:center; gap:12px; margin-top:28px; }
+.review-progress { font-size:12px; color:$t3; font-weight:600; }
 
 /* ══════ BUTTONS ══════ */
 .btn-dark {
@@ -290,6 +291,7 @@ $rs: 8px;
   display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap;
 }
 .ct-tab {
+  display:inline-flex; align-items:center; gap:4px;
   padding:8px 16px; font:600 12px/1 inherit; color:$t3; background:$s1; border:1px solid $b1;
   border-radius:20px; cursor:pointer; transition:.25s;
   &:hover { border-color:rgba($cyan,.2); color:$t2; }

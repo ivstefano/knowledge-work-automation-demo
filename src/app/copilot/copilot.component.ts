@@ -284,6 +284,15 @@ export class CopilotComponent {
       return li >= this.minLikelihood && im >= this.minImpact;
     });
   }
+  get allFlagsReviewed(): boolean {
+    return this.filteredFlags.every(f => f.feedback !== 'pending');
+  }
+  get reviewedFlagCount(): number {
+    return this.filteredFlags.filter(f => f.feedback !== 'pending').length;
+  }
+  flagCountForFile(name: string): number {
+    return this.filteredFlags.filter(f => f.contractName === name).length;
+  }
 
   // ── Escalation ──
   escalationTeam = 'Legal / Compliance Team — John Smith';

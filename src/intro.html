@@ -13,18 +13,32 @@
     background: #07070c;
     color: #e8e8f0;
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
   }
 
-  .container {
-    max-width: 960px;
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    pointer-events: none;
     padding: 48px;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .slide-inner {
+    max-width: 960px;
     text-align: center;
   }
 
+  /* ── Common ── */
   .badge {
     display: inline-flex;
     align-items: center;
@@ -39,33 +53,50 @@
     padding: 8px 20px;
     border-radius: 20px;
     margin-bottom: 32px;
-    animation: fadeIn 0.8s ease both;
   }
 
-  .title {
+  h1 {
     font-size: 56px;
     font-weight: 900;
     letter-spacing: -2px;
     line-height: 1.1;
-    margin-bottom: 40px;
-    animation: fadeIn 0.8s ease 0.2s both;
+    margin-bottom: 24px;
   }
-  .title .highlight {
+  .gradient {
     background: linear-gradient(135deg, #22d3ee, #a78bfa);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .pain {
+  h2 {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.2;
+    margin-bottom: 28px;
+  }
+
+  .body-text {
     font-size: 19px;
     line-height: 1.8;
     color: #7c7c96;
     max-width: 780px;
-    margin: 0 auto 48px;
-    animation: fadeIn 0.8s ease 0.4s both;
+    margin: 0 auto;
   }
+  .body-text strong { color: #e8e8f0; }
+  .body-text em { color: #22d3ee; font-style: normal; font-weight: 600; }
 
+  .sub-text {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #4a4a62;
+    max-width: 700px;
+    margin: 20px auto 0;
+  }
+  .sub-text strong { color: #7c7c96; }
+
+  /* ── Stat card ── */
   .stat-card {
     display: inline-flex;
     flex-direction: column;
@@ -75,10 +106,9 @@
     border: 1px solid rgba(248, 113, 113, 0.25);
     border-radius: 16px;
     background: linear-gradient(135deg, rgba(248, 113, 113, 0.04), rgba(251, 146, 60, 0.02));
-    margin-bottom: 48px;
+    margin: 36px 0;
     position: relative;
     overflow: hidden;
-    animation: fadeIn 0.8s ease 0.6s both;
   }
   .stat-card::before {
     content: '';
@@ -101,95 +131,317 @@
     font-weight: 600;
   }
 
-  .manual {
-    font-size: 17px;
-    line-height: 1.8;
-    color: #4a4a62;
-    max-width: 700px;
-    margin: 0 auto 56px;
-    animation: fadeIn 0.8s ease 0.8s both;
+  /* ── Process steps ── */
+  .process-steps {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 36px auto;
+    max-width: 800px;
   }
-  .manual strong {
+  .proc-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: #0e0e16;
+    border: 1px solid #1e1e2e;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
     color: #7c7c96;
   }
+  .proc-step .num {
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(34, 211, 238, 0.1);
+    color: #22d3ee;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .proc-arrow {
+    color: #1e1e2e;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+  }
 
+  /* ── Feature grid ── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 36px auto;
+    max-width: 800px;
+    text-align: left;
+  }
+  .feature-card {
+    padding: 20px;
+    background: #0e0e16;
+    border: 1px solid #1e1e2e;
+    border-radius: 12px;
+  }
+  .feature-card .fc-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  .feature-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .feature-card p {
+    font-size: 12px;
+    color: #4a4a62;
+    line-height: 1.5;
+  }
+
+  /* ── Question / CTA ── */
   .question {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 700;
     line-height: 1.5;
     max-width: 740px;
     margin: 0 auto;
-    animation: fadeIn 0.8s ease 1.0s both;
   }
-  .question .time-old {
+  .time-old {
     color: #f87171;
     text-decoration: line-through;
     text-decoration-thickness: 2px;
     opacity: 0.7;
   }
-  .question .time-new {
+  .time-new {
     color: #4ade80;
   }
 
-  .footer {
-    margin-top: 64px;
-    font-size: 11px;
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 40px;
+    padding: 16px 40px;
+    font: 700 15px/1 'Inter', sans-serif;
+    color: #07070c;
+    background: linear-gradient(135deg, #22d3ee, #a78bfa);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    letter-spacing: -0.3px;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(34, 211, 238, 0.3);
+  }
+
+  /* ── Navigation ── */
+  .nav {
+    position: fixed;
+    bottom: 32px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    z-index: 10;
+  }
+  .nav-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #1e1e2e;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .nav-dot.active {
+    background: #22d3ee;
+    box-shadow: 0 0 8px rgba(34, 211, 238, 0.4);
+    width: 24px;
+    border-radius: 4px;
+  }
+  .nav-hint {
+    font-size: 10px;
     color: #1e1e2e;
     letter-spacing: 1px;
     text-transform: uppercase;
     font-weight: 600;
-    animation: fadeIn 0.8s ease 1.2s both;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="badge">Knowledge Work Automation &middot; FSI</div>
-
-  <h1 class="title">
-    <span class="highlight">Audit & Furious</span>
-  </h1>
-
-  <p class="pain">
-    Every financial institution in the EU has a ticking clock. DORA, EU AI Act, MiFID II &mdash;
-    new regulations are stacking up. A single compliance officer has to read a 40-page contract,
-    cross-reference it against 5 different regulatory frameworks, flag violations, quantify risk,
-    and escalate &mdash; all before the next one lands on their desk.
-  </p>
-
-  <div class="stat-card">
-    <span class="stat-amount">&euro;7,000,000</span>
-    <span class="stat-label">per non-compliance incident &middot; or 3% of global annual turnover</span>
+<!-- ══════ SLIDE 1: TITLE ══════ -->
+<div class="slide active" data-slide="0">
+  <div class="slide-inner">
+    <div class="badge">Knowledge Work Automation &middot; FSI</div>
+    <h1><span class="gradient">Audit & Furious</span></h1>
+    <p class="body-text">
+      Compliance intelligence that turns <strong>days of manual contract review</strong>
+      into a <em>15-minute guided workflow</em> &mdash; with structured rules,
+      human-in-the-loop evaluation, and a full audit trail.
+    </p>
+    <p class="sub-text">
+      Built on <strong>Iris</strong> &middot; the knowledge work automation platform
+    </p>
   </div>
+</div>
 
-  <p class="manual">
-    Today, this process is entirely manual. <strong>Open contract. Open regulation. Read. Compare.
-    Flag. Write an email. Repeat.</strong> It takes days per contract. It doesn't scale.
-    And when it fails, it fails quietly &mdash; until a regulator finds the gap.
-  </p>
+<!-- ══════ SLIDE 2: THE PROBLEM ══════ -->
+<div class="slide" data-slide="1">
+  <div class="slide-inner">
+    <h2>The Problem</h2>
+    <p class="body-text">
+      Every financial institution in the EU has a ticking clock.
+      <strong>DORA, EU AI Act, MiFID II</strong> &mdash; new regulations are stacking up.
+      A single compliance officer has to read a 40-page contract,
+      cross-reference it against 5 different regulatory frameworks,
+      flag violations, quantify risk, and escalate &mdash;
+      all before the next one lands on their desk.
+    </p>
+    <div class="stat-card">
+      <span class="stat-amount">&euro;7,000,000</span>
+      <span class="stat-label">per non-compliance incident &middot; or 3% of global annual turnover</span>
+    </div>
+    <p class="sub-text">
+      <strong>22,000+ financial entities</strong> across the EU are subject to DORA alone.
+      Every one of them faces this problem today.
+    </p>
+  </div>
+</div>
 
-  <p class="question">
-    What if a compliance officer could do this in
-    <span class="time-new">15 minutes</span> instead of
-    <span class="time-old">3 days</span>
-    &mdash; with a full audit trail proving every decision?
-  </p>
+<!-- ══════ SLIDE 3: TODAY'S PROCESS ══════ -->
+<div class="slide" data-slide="2">
+  <div class="slide-inner">
+    <h2>Today: Manual, Slow, Error-Prone</h2>
+    <p class="body-text">
+      <strong>Open contract. Open regulation. Read. Compare. Flag.
+      Write an email. Repeat.</strong>
+    </p>
+    <p class="sub-text" style="margin-bottom: 32px">
+      Data lives across <strong>5 systems, Excel sheets, and people's heads.</strong>
+      It takes days per contract. It doesn't scale.
+      And when it fails, it fails quietly &mdash; until a regulator finds the gap.
+    </p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="fc-icon">&#128196;</div>
+        <h4>Fragmented Data</h4>
+        <p>Contracts in PDFs, regulations in legal databases, vendor info in Excel. No single source of truth.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">&#9200;</div>
+        <h4>3+ Days per Contract</h4>
+        <p>Manual cross-referencing of every clause against every regulation. Scales linearly with volume.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">&#128683;</div>
+        <h4>No Audit Trail</h4>
+        <p>When a regulator asks "how did you check this?" &mdash; the answer is "someone read it." Not good enough.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <p class="footer">Press any key to continue to demo</p>
+<!-- ══════ SLIDE 4: THE IRIS LOOP ══════ -->
+<div class="slide" data-slide="3">
+  <div class="slide-inner">
+    <h2>The Iris Approach</h2>
+    <p class="body-text">
+      Not just AI output &mdash; a <em>knowledge work automation loop</em>.
+      Ingest, understand, check, review, evaluate, improve.
+    </p>
+    <div class="process-steps">
+      <div class="proc-step"><span class="num">1</span> Upload</div>
+      <div class="proc-arrow">&rarr;</div>
+      <div class="proc-step"><span class="num">2</span> Rules</div>
+      <div class="proc-arrow">&rarr;</div>
+      <div class="proc-step"><span class="num">3</span> Analysis</div>
+      <div class="proc-arrow">&rarr;</div>
+      <div class="proc-step"><span class="num">4</span> Escalation</div>
+      <div class="proc-arrow">&rarr;</div>
+      <div class="proc-step"><span class="num">5</span> Evaluation</div>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="fc-icon">&#128269;</div>
+        <h4>Structured Rules</h4>
+        <p>Regulations become reusable, auditable rule sets &mdash; not ad-hoc prompts. Domain expertise becomes a digital asset.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">&#129309;</div>
+        <h4>Human-in-the-Loop</h4>
+        <p>Three steering points: regulation selection, finding review, escalation. The human decides. The system executes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">&#128200;</div>
+        <h4>Evaluation Loop</h4>
+        <p>Every Agree/Dismiss creates ground truth. Baseline comparison proves the pipeline beats raw LLM. Show the receipts.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SLIDE 5: THE QUESTION + CTA ══════ -->
+<div class="slide" data-slide="4">
+  <div class="slide-inner">
+    <h2>What if?</h2>
+    <p class="question">
+      What if a compliance officer could do this in
+      <span class="time-new">15 minutes</span> instead of
+      <span class="time-old">3 days</span>
+      &mdash; with a full audit trail proving every decision?
+    </p>
+    <p class="sub-text" style="margin-top: 28px">
+      Let's walk through a real scenario: a DeFi lending contract checked against
+      the <strong>Standardized Digital Asset Lending Protocol</strong>.
+    </p>
+    <button class="cta-btn" onclick="window.location.href='/'">
+      Launch Live Demo &rarr;
+    </button>
+  </div>
+</div>
+
+<!-- ══════ NAVIGATION ══════ -->
+<div class="nav">
+  <span class="nav-hint">Arrow keys or click</span>
+  <div class="nav-dots">
+    <button class="nav-dot active" data-goto="0"></button>
+    <button class="nav-dot" data-goto="1"></button>
+    <button class="nav-dot" data-goto="2"></button>
+    <button class="nav-dot" data-goto="3"></button>
+    <button class="nav-dot" data-goto="4"></button>
+  </div>
+  <span class="nav-hint" id="slide-counter">1 / 5</span>
 </div>
 
 <script>
-  document.addEventListener('keydown', () => {
-    window.location.href = '/';
+  let current = 0;
+  const total = 5;
+
+  function goTo(i) {
+    if (i < 0 || i >= total) return;
+    document.querySelector('.slide.active').classList.remove('active');
+    document.querySelector('.nav-dot.active').classList.remove('active');
+    current = i;
+    document.querySelector(`[data-slide="${i}"]`).classList.add('active');
+    document.querySelectorAll('.nav-dot')[i].classList.add('active');
+    document.getElementById('slide-counter').textContent = `${i + 1} / ${total}`;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'Enter' && current === total - 1) { window.location.href = '/'; }
   });
-  document.addEventListener('click', () => {
-    window.location.href = '/';
+
+  document.querySelectorAll('.nav-dot').forEach(dot => {
+    dot.addEventListener('click', () => goTo(parseInt(dot.dataset.goto)));
   });
 </script>
 

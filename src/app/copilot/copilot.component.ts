@@ -464,9 +464,10 @@ export class CopilotComponent {
   loadSavedRuleset() { this.savedRulesetVisible = false; }
   dismissSavedBanner() { this.savedRulesetVisible = false; }
   addCustomRule() {
-    if (this.customRuleForm.id && this.customRuleForm.title) {
+    if (this.customRuleForm.title) {
+      const existingCount = this.rules.filter(r => r.id.startsWith('CUST-')).length;
       this.rules.push({
-        id: this.customRuleForm.id,
+        id: `CUST-${existingCount + 1}`,
         title: this.customRuleForm.title,
         source: 'Custom',
         description: this.customRuleForm.description,

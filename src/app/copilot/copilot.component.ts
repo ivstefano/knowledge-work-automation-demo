@@ -395,6 +395,12 @@ export class CopilotComponent {
     if (matching.length === 0) return '';
     return matching.some(f => f.severity === 'high') ? 'violation' : 'warning';
   }
+  getEscalationClauseHighlight(clauseNum: number): string {
+    const matching = this.escalatableFlags.filter(f => f.contractClauseNum === clauseNum);
+    if (matching.length === 0) return '';
+    return matching.some(f => f.severity === 'high') ? 'violation' : 'warning';
+  }
+
   selectedFlagId: number | null = null;
   selectFlag(f: Flag) {
     this.selectedFlagId = this.selectedFlagId === f.id ? null : f.id;

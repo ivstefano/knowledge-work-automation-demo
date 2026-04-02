@@ -276,12 +276,15 @@
                   </div>
                 </div>
                 <div class="flag-actions">
-                  <select class="feedback-select" [class]="f.feedback" [(ngModel)]="f.feedback" (click)="$event.stopPropagation()">
-                    <option value="pending">Pending</option>
-                    <option value="agreed">Agreed</option>
-                    <option value="dismissed">Dismissed</option>
-                    <option value="skipped">Skip</option>
-                  </select>
+                  <button class="fa-btn agree" [class.active]="f.feedback === 'agreed'" (click)="toggleFeedback(f,'agreed'); $event.stopPropagation()">
+                    <span class="material-symbols-rounded">check_circle</span> Agree
+                  </button>
+                  <button class="fa-btn dismiss" [class.active]="f.feedback === 'dismissed'" (click)="toggleFeedback(f,'dismissed'); $event.stopPropagation()">
+                    <span class="material-symbols-rounded">cancel</span> Dismiss
+                  </button>
+                  <button class="fa-btn skip" [class.active]="f.feedback === 'skipped'" (click)="toggleFeedback(f,'skipped'); $event.stopPropagation()">
+                    <span class="material-symbols-rounded">remove_circle_outline</span> Skip
+                  </button>
                 </div>
               </div>
             }

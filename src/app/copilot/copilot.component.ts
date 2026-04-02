@@ -380,6 +380,10 @@ export class CopilotComponent {
     flag.feedback = fb;
     if (fb === 'dismissed') flag.escalate = false;
   }
+  toggleFeedback(flag: Flag, fb: 'agreed' | 'dismissed' | 'skipped') {
+    flag.feedback = flag.feedback === fb ? 'pending' : fb;
+    flag.escalate = flag.feedback !== 'dismissed';
+  }
 
   // Escalation
   sendEscalation() { this.escalationSent = true; }

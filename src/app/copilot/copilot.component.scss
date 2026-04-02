@@ -420,14 +420,17 @@ $rs: 8px;
   &.agree {
     background:rgba($green,.08); color:$green; border-color:rgba($green,.2);
     &:hover { background:rgba($green,.16); box-shadow:0 0 16px rgba($green,.2); transform:translateY(-1px); }
+    &.active { background:rgba($green,.2); box-shadow:0 0 12px rgba($green,.25); border-color:rgba($green,.4); }
   }
   &.dismiss {
     background:rgba($red,.08); color:$red; border-color:rgba($red,.2);
     &:hover { background:rgba($red,.16); box-shadow:0 0 16px rgba($red,.2); transform:translateY(-1px); }
+    &.active { background:rgba($red,.2); box-shadow:0 0 12px rgba($red,.25); border-color:rgba($red,.4); }
   }
-  &.skipped {
+  &.skip {
     background:rgba(255,255,255,.04); color:$t3; border-color:$b1;
     &:hover { background:rgba(255,255,255,.08); color:$t2; transform:translateY(-1px); }
+    &.active { background:rgba($blue,.12); color:$blue; border-color:rgba($blue,.3); box-shadow:0 0 12px rgba($blue,.15); }
   }
 }
 .fa-result {

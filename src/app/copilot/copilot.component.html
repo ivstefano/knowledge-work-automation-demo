@@ -109,7 +109,7 @@
               <div class="drop-zone mini" style="opacity:0.6; cursor:default">
                 <span class="material-symbols-rounded drop-icon">upload_file</span>
                 <p>Upload your own regulatory documents or internal compliance policies</p>
-                <span class="drop-formats">PDF, DOCX — coming soon</span>
+                <span class="drop-formats">PDF, DOCX - coming soon</span>
               </div>
             </div>
           }
@@ -189,7 +189,7 @@
       <!-- Risk threshold filters -->
       <div class="risk-filters">
         <div class="rf-header">
-          <span class="rf-title">Risk Threshold — Filter Findings</span>
+          <span class="rf-title">Risk Threshold - Filter Findings</span>
           <span class="rf-stats">Showing {{ filteredFlags.length }} of {{ flags.length }} findings</span>
         </div>
         <div class="rf-sliders">
@@ -251,7 +251,7 @@
             @for (f of filteredFlagsByView; track f.id) {
               <div class="flag-card" [class.selected]="selectedFlagId === f.id" (click)="selectFlag(f)">
                 <div class="flag-header">
-                  <h4>Flag {{ f.id }} — {{ f.title }}</h4>
+                  <h4>Flag {{ f.id }} - {{ f.title }}</h4>
                   <span class="sev" [class]="f.severity">{{ f.severity }}</span>
                 </div>
                 <div class="flag-body">
@@ -310,7 +310,7 @@
       <div class="analysis-grid">
         <!-- Left: Contract with confirmed issues + previews -->
         <div class="contract-panel">
-          <h3 class="panel-title">ORIGINAL CONTRACT — CONFIRMED ISSUES</h3>
+          <h3 class="panel-title">ORIGINAL CONTRACT - CONFIRMED ISSUES</h3>
           <div class="contract-body compact">
             @for (c of contractClauses; track c.num) {
               <p class="clause" [class]="getEscalationClauseHighlight(c.num)">
@@ -346,7 +346,7 @@
             <!-- Risk banner -->
             <div class="risk-banner">
               <span class="risk-amount">{{ totalRisk }}</span>
-              <span class="risk-sub">Total Potential Risk — {{ escalatableFlags.length }} violations across {{ selectedEscalationFiles.length }} contracts × €7M per incident</span>
+              <span class="risk-sub">Total Potential Risk - {{ escalatableFlags.length }} violations across {{ selectedEscalationFiles.length }} contracts × €7M per incident</span>
             </div>
             }
 

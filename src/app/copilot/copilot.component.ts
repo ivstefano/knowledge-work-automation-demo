@@ -87,8 +87,8 @@ export class CopilotComponent {
   // ── Upload ──
   dragOver = false;
   uploadedFiles: UploadedFile[] = [
-    { name: 'DLC-2026-Alpha.pdf', selected: true, type: 'contract', previewText: 'Draft Digital Lending Contract — Decentralized Peer-to-Peer Loan Agreement between Borrower Alpha (0x4fA6...B1cE) and Lender Omega (0x9eD5...C8fF). Principal: 10,000 USDC, Term: 180 Days, Collateral: 5 ETH.' },
-    { name: 'SDALP-v2.1-2026.pdf', selected: true, type: 'regulation', previewText: 'Standardized Digital Asset Lending Protocol v2.1 — Industry standard for DeFi lending contracts covering interest rate transparency, liquidation procedures, collateral requirements, and audit obligations.' },
+    { name: 'DLC-2026-Alpha.pdf', selected: true, type: 'contract', previewText: 'Draft Digital Lending Contract - Decentralized Peer-to-Peer Loan Agreement between Borrower Alpha (0x4fA6...B1cE) and Lender Omega (0x9eD5...C8fF). Principal: 10,000 USDC, Term: 180 Days, Collateral: 5 ETH.' },
+    { name: 'SDALP-v2.1-2026.pdf', selected: true, type: 'regulation', previewText: 'Standardized Digital Asset Lending Protocol v2.1 - Industry standard for DeFi lending contracts covering interest rate transparency, liquidation procedures, collateral requirements, and audit obligations.' },
     { name: 'vendor_registry.xlsx', selected: true, type: 'registry', previewText: 'Vendor registry containing counterparty details: Borrower Alpha (High risk), Lender Omega (Medium risk), Liquidation Agent (Low risk).' },
   ];
   previewFile: UploadedFile | null = null;
@@ -105,9 +105,9 @@ export class CopilotComponent {
 
   // ── Vendor Registry ──
   vendorRegistry: VendorRow[] = [
-    { vendorId: 'V-001', vendorName: 'Borrower Alpha (0x4fA6...B1cE)', contractId: 'DLC-2026-Alpha', responsibleTeam: 'DeFi Risk — Sarah Chen', contact: 'sarah.chen@iris.ai', riskTier: 'High' },
-    { vendorId: 'V-002', vendorName: 'Lender Omega (0x9eD5...C8fF)', contractId: 'DLC-2026-Alpha', responsibleTeam: 'Compliance — John Smith', contact: 'john.smith@iris.ai', riskTier: 'Medium' },
-    { vendorId: 'V-003', vendorName: 'Liquidation Agent', contractId: 'DLC-2026-Alpha', responsibleTeam: 'Smart Contract Ops — Mike Chen', contact: 'mike.chen@iris.ai', riskTier: 'Low' },
+    { vendorId: 'V-001', vendorName: 'Borrower Alpha (0x4fA6...B1cE)', contractId: 'DLC-2026-Alpha', responsibleTeam: 'DeFi Risk - Sarah Chen', contact: 'sarah.chen@iris.ai', riskTier: 'High' },
+    { vendorId: 'V-002', vendorName: 'Lender Omega (0x9eD5...C8fF)', contractId: 'DLC-2026-Alpha', responsibleTeam: 'Compliance - John Smith', contact: 'john.smith@iris.ai', riskTier: 'Medium' },
+    { vendorId: 'V-003', vendorName: 'Liquidation Agent', contractId: 'DLC-2026-Alpha', responsibleTeam: 'Smart Contract Ops - Mike Chen', contact: 'mike.chen@iris.ai', riskTier: 'Low' },
   ];
 
   get fileUploaded(): boolean { return this.uploadedFiles.length > 0; }
@@ -131,23 +131,23 @@ export class CopilotComponent {
   // ── Contract text (from DLC-2026-Alpha) ──
   contractClauses = [
     { num: 1, text: 'Draft Digital Lending Contract (DLC-2026-Alpha). Decentralized Peer-to-Peer Loan Agreement. Effective Date: 2 April 2026. Borrower: 0x4fA6...B1cE (Borrower Alpha). Lender: 0x9eD5...C8fF (Lender Omega).' },
-    { num: 2, text: '§1.1 Principal and Term — Principal Asset: 10,000 USDC. Term: 180 Days. Repayment Asset: USDC.' },
-    { num: 3, text: '§1.2 Interest Rate — The annual interest rate is set at 10% APR, compounded hourly. The interest rate is subject to dynamic adjustment by the Lender\'s governance mechanism (0x1A2B...3C4D). Adjustments may occur immediately upon governance consensus.' },
-    { num: 4, text: '§1.3 Collateral — Collateral Asset: 5 ETH. Collateral Deposit Address: 0x4fA6...B1cE (Locked in Smart Contract Escrow).' },
-    { num: 5, text: '§2.1 LTV and Liquidation Threshold — LTV at Origination: based on ETH/USDC price feed. Liquidation Threshold: 85% LTV.' },
-    { num: 6, text: '§2.2 Liquidation Procedure — If LTV exceeds 85%, the Smart Contract will IMMEDIATELY initiate sale of Collateral Asset (ETH) via public AMM pool. No grace period specified.' },
-    { num: 7, text: '§2.3 Fees — A liquidation fee of 1% of the sold collateral value will be deducted and paid to the Liquidation Agent.' },
-    { num: 8, text: '§3 Governing Clause — Borrower warrants 5 ETH collateral represents 100% of assets used as collateral. Contract allows addition of further collateral only with written consent, overriding any pool diversification requirements.' },
-    { num: 9, text: '§4 Audit — This DLC has not yet been submitted for an independent security audit but is pending internal review.' },
+    { num: 2, text: '§1.1 Principal and Term - Principal Asset: 10,000 USDC. Term: 180 Days. Repayment Asset: USDC.' },
+    { num: 3, text: '§1.2 Interest Rate - The annual interest rate is set at 10% APR, compounded hourly. The interest rate is subject to dynamic adjustment by the Lender\'s governance mechanism (0x1A2B...3C4D). Adjustments may occur immediately upon governance consensus.' },
+    { num: 4, text: '§1.3 Collateral - Collateral Asset: 5 ETH. Collateral Deposit Address: 0x4fA6...B1cE (Locked in Smart Contract Escrow).' },
+    { num: 5, text: '§2.1 LTV and Liquidation Threshold - LTV at Origination: based on ETH/USDC price feed. Liquidation Threshold: 85% LTV.' },
+    { num: 6, text: '§2.2 Liquidation Procedure - If LTV exceeds 85%, the Smart Contract will IMMEDIATELY initiate sale of Collateral Asset (ETH) via public AMM pool. No grace period specified.' },
+    { num: 7, text: '§2.3 Fees - A liquidation fee of 1% of the sold collateral value will be deducted and paid to the Liquidation Agent.' },
+    { num: 8, text: '§3 Governing Clause - Borrower warrants 5 ETH collateral represents 100% of assets used as collateral. Contract allows addition of further collateral only with written consent, overriding any pool diversification requirements.' },
+    { num: 9, text: '§4 Audit - This DLC has not yet been submitted for an independent security audit but is pending internal review.' },
   ];
 
   // ── Regulation text (from SDALP v2.1) ──
   regulationClauses: RegulationClause[] = [
-    { id: 'SDALP-2.1.1', section: '§2.1.1', text: 'Interest Rate Transparency — DLC MUST specify exact formula for interest rate calculation. Variable rates MUST include: (a) 72-hour advance notice to borrower before any rate change, (b) a hard-coded interest rate cap in the smart contract, (c) public on-chain governance vote record for any adjustment.' },
-    { id: 'SDALP-2.1.2', section: '§2.1.2', text: 'Liquidation Grace Period — A mandatory 48-hour grace period SHALL apply after the Loan-to-Value ratio crosses the liquidation threshold. During this period: (a) the borrower MUST be notified via on-chain event, (b) the borrower MAY deposit additional collateral, (c) NO liquidation action may commence.' },
-    { id: 'SDALP-2.2', section: '§2.2', text: 'Security Audit Requirement — All Digital Lending Contracts MUST complete an independent security audit by a certified blockchain auditor before deployment. The audit report MUST be publicly linked on-chain and include: scope, methodology, findings, and remediation status.' },
-    { id: 'SDALP-2.3.1', section: '§2.3.1', text: 'Collateral Diversification — Single collateral asset SHALL NOT exceed 90% of total assets in the contract pool. Contracts accepting single-asset collateral MUST include automated rebalancing triggers or explicit regulatory exemption documentation.' },
-    { id: 'SDALP-3.1', section: '§3.1', text: 'Governance Safeguards — Any governance mechanism with authority to modify contract terms MUST require: (a) multi-signature approval (minimum 3-of-5), (b) 7-day timelock on parameter changes, (c) borrower notification and opt-out window before changes take effect.' },
+    { id: 'SDALP-2.1.1', section: '§2.1.1', text: 'Interest Rate Transparency - DLC MUST specify exact formula for interest rate calculation. Variable rates MUST include: (a) 72-hour advance notice to borrower before any rate change, (b) a hard-coded interest rate cap in the smart contract, (c) public on-chain governance vote record for any adjustment.' },
+    { id: 'SDALP-2.1.2', section: '§2.1.2', text: 'Liquidation Grace Period - A mandatory 48-hour grace period SHALL apply after the Loan-to-Value ratio crosses the liquidation threshold. During this period: (a) the borrower MUST be notified via on-chain event, (b) the borrower MAY deposit additional collateral, (c) NO liquidation action may commence.' },
+    { id: 'SDALP-2.2', section: '§2.2', text: 'Security Audit Requirement - All Digital Lending Contracts MUST complete an independent security audit by a certified blockchain auditor before deployment. The audit report MUST be publicly linked on-chain and include: scope, methodology, findings, and remediation status.' },
+    { id: 'SDALP-2.3.1', section: '§2.3.1', text: 'Collateral Diversification - Single collateral asset SHALL NOT exceed 90% of total assets in the contract pool. Contracts accepting single-asset collateral MUST include automated rebalancing triggers or explicit regulatory exemption documentation.' },
+    { id: 'SDALP-3.1', section: '§3.1', text: 'Governance Safeguards - Any governance mechanism with authority to modify contract terms MUST require: (a) multi-signature approval (minimum 3-of-5), (b) 7-day timelock on parameter changes, (c) borrower notification and opt-out window before changes take effect.' },
   ];
 
   // ── Analysis ──
@@ -159,7 +159,7 @@ export class CopilotComponent {
   flags: Flag[] = [
     {
       id: 1, title: 'Interest Rate Not Transparent', ruleId: 'SDALP-2.1.1', severity: 'high',
-      issue: 'Interest rate is subject to immediate dynamic adjustment by governance mechanism without 72h notice or hard-coded cap — violates SDALP §2.1.1.',
+      issue: 'Interest rate is subject to immediate dynamic adjustment by governance mechanism without 72h notice or hard-coded cap - violates SDALP §2.1.1.',
       contractRef: '§1.2: "subject to dynamic adjustment by the Lender\'s governance mechanism... Adjustments may occur immediately"',
       regulationRef: 'SDALP §2.1.1: "Variable rates require 72h notice and a hard-coded cap"',
       confidence: 96, likelihood: 'Very Likely', impact: 'Extreme',
@@ -168,7 +168,7 @@ export class CopilotComponent {
     },
     {
       id: 2, title: 'No Liquidation Grace Period', ruleId: 'SDALP-2.1.2', severity: 'high',
-      issue: 'Contract specifies IMMEDIATE liquidation with no grace period — directly violates mandatory 48-hour grace period requirement.',
+      issue: 'Contract specifies IMMEDIATE liquidation with no grace period - directly violates mandatory 48-hour grace period requirement.',
       contractRef: '§2.2: "Smart Contract will IMMEDIATELY initiate sale... No grace period specified"',
       regulationRef: 'SDALP §2.1.2: "Mandatory 48-hour grace period after LTV crosses threshold"',
       confidence: 98, likelihood: 'Very Likely', impact: 'Extreme',
@@ -177,7 +177,7 @@ export class CopilotComponent {
     },
     {
       id: 3, title: 'Security Audit Missing', ruleId: 'SDALP-2.2', severity: 'medium',
-      issue: 'Contract has not been submitted for independent security audit — only "pending internal review" is mentioned.',
+      issue: 'Contract has not been submitted for independent security audit - only "pending internal review" is mentioned.',
       contractRef: '§4: "has not yet been submitted for an independent security audit but is pending internal review"',
       regulationRef: 'SDALP §2.2: "All DLCs MUST complete independent security audit. Audit report MUST be publicly linked"',
       confidence: 92, likelihood: 'Likely', impact: 'Major',
@@ -204,7 +204,7 @@ export class CopilotComponent {
     },
     {
       id: 6, title: 'Hourly Compounding Disclosure', ruleId: 'SDALP-2.1.1', severity: 'medium',
-      issue: 'Contract specifies hourly compounding but does not disclose the effective annual rate (EAR) — borrower may not understand true cost.',
+      issue: 'Contract specifies hourly compounding but does not disclose the effective annual rate (EAR) - borrower may not understand true cost.',
       contractRef: '§1.2: "10% APR, compounded hourly"',
       regulationRef: 'SDALP §2.1.1: "DLC MUST specify exact formula for interest rate calculation"',
       confidence: 74, likelihood: 'Moderate', impact: 'Moderate',
@@ -213,7 +213,7 @@ export class CopilotComponent {
     },
     {
       id: 7, title: 'Liquidation Fee Exceeds Guidance', ruleId: 'SDALP-2.1.2', severity: 'low',
-      issue: 'Liquidation fee of 1% is within range but lacks a cap mechanism — could compound with slippage in volatile markets.',
+      issue: 'Liquidation fee of 1% is within range but lacks a cap mechanism - could compound with slippage in volatile markets.',
       contractRef: '§2.3: "liquidation fee of 1% of the sold collateral value"',
       regulationRef: 'SDALP §2.1.2: Best practice recommends capped liquidation fees',
       confidence: 52, likelihood: 'Unlikely', impact: 'Minor',
@@ -222,7 +222,7 @@ export class CopilotComponent {
     },
     {
       id: 8, title: 'Price Feed Source Not Specified', ruleId: 'SDALP-2.3.1', severity: 'medium',
-      issue: 'LTV calculation references "ETH/USDC price feed" but does not specify oracle source — risk of price manipulation.',
+      issue: 'LTV calculation references "ETH/USDC price feed" but does not specify oracle source - risk of price manipulation.',
       contractRef: '§2.1: "based on ETH/USDC price feed"',
       regulationRef: 'SDALP §2.3.1: Collateral valuation must use verifiable, tamper-resistant price sources',
       confidence: 81, likelihood: 'Moderate', impact: 'Major',
@@ -240,7 +240,7 @@ export class CopilotComponent {
     },
     {
       id: 10, title: 'Escrow Address Reuse', ruleId: 'SDALP-2.2', severity: 'low',
-      issue: 'Collateral deposit address matches borrower address — no dedicated escrow contract referenced, minor security concern.',
+      issue: 'Collateral deposit address matches borrower address - no dedicated escrow contract referenced, minor security concern.',
       contractRef: '§1.3: "Collateral Deposit Address: 0x4fA6...B1cE"',
       regulationRef: 'SDALP §2.2: Audit should verify isolation of collateral in dedicated escrow',
       confidence: 45, likelihood: 'Unlikely', impact: 'Moderate',
@@ -249,7 +249,7 @@ export class CopilotComponent {
     },
     {
       id: 11, title: 'Repayment Currency Mismatch Risk', ruleId: 'SDALP-2.1.1', severity: 'low',
-      issue: 'Repayment is in USDC while collateral is ETH — no mention of handling depegging scenarios for stablecoins.',
+      issue: 'Repayment is in USDC while collateral is ETH - no mention of handling depegging scenarios for stablecoins.',
       contractRef: '§1.1: "Principal Asset: 10,000 USDC... Repayment Asset: USDC"',
       regulationRef: 'SDALP §2.1.1: Interest and repayment terms should account for asset-specific risks',
       confidence: 38, likelihood: 'Rare', impact: 'Minor',
@@ -258,7 +258,7 @@ export class CopilotComponent {
     },
     {
       id: 12, title: 'AMM Pool Slippage Unaddressed', ruleId: 'SDALP-2.1.2', severity: 'low',
-      issue: 'Liquidation via "public AMM pool" does not specify slippage tolerance or minimum output — borrower could suffer excess loss.',
+      issue: 'Liquidation via "public AMM pool" does not specify slippage tolerance or minimum output - borrower could suffer excess loss.',
       contractRef: '§2.2: "initiate sale of Collateral Asset (ETH) via public AMM pool"',
       regulationRef: 'SDALP §2.1.2: Liquidation procedures should protect borrower from excessive slippage',
       confidence: 55, likelihood: 'Unlikely', impact: 'Moderate',
@@ -295,9 +295,9 @@ export class CopilotComponent {
 
   // ── Escalation ──
   escalationTeams = [
-    { name: 'Legal / Compliance — John Smith', selected: true },
-    { name: 'DeFi Risk — Sarah Chen', selected: false },
-    { name: 'Smart Contract Ops — Mike Chen', selected: false },
+    { name: 'Legal / Compliance - John Smith', selected: true },
+    { name: 'DeFi Risk - Sarah Chen', selected: false },
+    { name: 'Smart Contract Ops - Mike Chen', selected: false },
     { name: 'Executive Risk Committee', selected: false },
   ];
   escalationComment = '';
@@ -310,7 +310,7 @@ export class CopilotComponent {
       { time: '14:32', text: `${this.uploadedFiles.map(f => f.name).join(' + ')} uploaded` },
       { time: '14:33', text: `${this.regulations.filter(r => r.selected).map(r => r.label).join(', ')} selected as regulatory sources` },
       { time: '14:33', text: `${this.rules.length} compliance rules loaded (${this.rules.filter(r => r.id.startsWith('CUST-')).length} custom), ${this.activeRuleCount} active` },
-      { time: '14:34', text: `Analysis complete — ${this.flags.length} findings flagged (${this.filteredFlags.length} above risk threshold)` },
+      { time: '14:34', text: `Analysis complete - ${this.flags.length} findings flagged (${this.filteredFlags.length} above risk threshold)` },
     ];
     if (agreed.length > 0 || dismissed.length > 0) {
       const parts: string[] = [];
@@ -381,7 +381,7 @@ export class CopilotComponent {
     switch (this.currentStep) {
       case 'upload': return 'Upload Assistant';
       case 'rules': return 'Rules Advisor';
-      case 'analysis': return 'Analysis — SDALP Compliance';
+      case 'analysis': return 'Analysis - SDALP Compliance';
       case 'escalation': return 'Escalation Helper';
       case 'evaluation': return 'Evaluation Insights';
     }
@@ -529,13 +529,13 @@ export class CopilotComponent {
     this.chatInput = '';
     setTimeout(() => {
       if (q.includes('interest') || q.includes('rate') || q.includes('transparency')) {
-        this.chatMessages.push({ role: 'assistant', text: 'Under SDALP §2.1.1, variable interest rates require 72-hour advance notice, a hard-coded cap in the smart contract, and a public on-chain governance vote. DLC-2026-Alpha allows immediate adjustment by governance mechanism (0x1A2B...3C4D) without any of these safeguards — this is the highest-severity finding.' });
+        this.chatMessages.push({ role: 'assistant', text: 'Under SDALP §2.1.1, variable interest rates require 72-hour advance notice, a hard-coded cap in the smart contract, and a public on-chain governance vote. DLC-2026-Alpha allows immediate adjustment by governance mechanism (0x1A2B...3C4D) without any of these safeguards - this is the highest-severity finding.' });
       } else if (q.includes('liquidation') || q.includes('grace')) {
-        this.chatMessages.push({ role: 'assistant', text: 'SDALP §2.1.2 mandates a 48-hour grace period after LTV crosses the liquidation threshold. The borrower must be notified via on-chain event and may deposit additional collateral. DLC-2026-Alpha specifies immediate liquidation with no grace period — a direct violation.' });
+        this.chatMessages.push({ role: 'assistant', text: 'SDALP §2.1.2 mandates a 48-hour grace period after LTV crosses the liquidation threshold. The borrower must be notified via on-chain event and may deposit additional collateral. DLC-2026-Alpha specifies immediate liquidation with no grace period - a direct violation.' });
       } else if (q.includes('compliant') || q.includes('clause') || q.includes('fix')) {
         this.chatMessages.push({ role: 'assistant', text: 'A compliant interest rate clause would state: "The annual interest rate is fixed at 10% APR. Any adjustment requires 72-hour advance on-chain notice, governance vote with minimum 3-of-5 approval, and shall not exceed the hard-coded cap of 15% APR embedded in the smart contract."' });
       } else if (q.includes('collateral') || q.includes('diversif')) {
-        this.chatMessages.push({ role: 'assistant', text: 'SDALP §2.3.1 requires that no single collateral asset exceeds 90% of the pool. DLC-2026-Alpha uses 100% ETH as collateral and explicitly overrides diversification requirements in §3 — this violates the regulation and concentrates risk.' });
+        this.chatMessages.push({ role: 'assistant', text: 'SDALP §2.3.1 requires that no single collateral asset exceeds 90% of the pool. DLC-2026-Alpha uses 100% ETH as collateral and explicitly overrides diversification requirements in §3 - this violates the regulation and concentrates risk.' });
       } else {
         this.chatMessages.push({ role: 'assistant', text: 'Based on the SDALP analysis of DLC-2026-Alpha, I identified 13 potential compliance issues. The most critical are the missing liquidation grace period (§2.2) and uncontrolled interest rate adjustments (§1.2). Would you like me to explain a specific finding?' });
       }

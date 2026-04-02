@@ -106,10 +106,10 @@
 
           @if (ruleSource === 'upload') {
             <div class="source-panel-content">
-              <div class="drop-zone mini">
+              <div class="drop-zone mini" style="opacity:0.6; cursor:default">
                 <span class="material-symbols-rounded drop-icon">upload_file</span>
                 <p>Upload your own regulatory documents or internal compliance policies</p>
-                <span class="drop-formats">PDF, DOCX — system will extract rules automatically</span>
+                <span class="drop-formats">PDF, DOCX — coming soon</span>
               </div>
             </div>
           }
@@ -174,7 +174,7 @@
       </div>
 
       <div class="step-footer-right">
-        <button class="btn-outline">
+        <button class="btn-outline" disabled title="Coming soon">
           <span class="material-symbols-rounded" style="font-size:16px">save</span> Save Ruleset
         </button>
         <button class="btn-dark" (click)="nextStep()">NEXT: ANALYZE CONTRACTS →</button>
@@ -288,6 +288,12 @@
                 </div>
               </div>
             }
+            @if (filteredFlagsByView.length === 0) {
+              <div class="empty-state">
+                <span class="material-symbols-rounded" style="font-size:32px; color:#4a4a62">search_off</span>
+                <p>No compliance findings for this document.</p>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -389,20 +395,18 @@
                 <span class="esc-contract-count">{{ selectedEscalationFiles.length }} of {{ flaggedFiles.length }} flagged files attached</span>
               </div>
 
-              <!-- Flags grouped by contract -->
+              <!-- Flags grouped by contract (read-only preview) -->
               <div class="esc-field">
                 <label>FLAGGED VIOLATIONS ({{ escalatableFlags.length }})</label>
                 <div class="esc-flags">
                   @for (name of contractNames; track name) {
                     <div class="esc-group-header">{{ name }}</div>
                     @for (f of flagsByContract(name); track f.id) {
-                      <label class="esc-flag-row" (click)="f.escalate = !f.escalate; $event.preventDefault()">
-                        <span class="custom-check" [class.checked]="f.escalate">
-                          <span class="material-symbols-rounded">{{ f.escalate ? 'check_box' : 'check_box_outline_blank' }}</span>
-                        </span>
+                      <div class="esc-flag-row preview">
+                        <span class="material-symbols-rounded" style="font-size:16px; color:#f87171">warning</span>
                         <span>Flag {{ f.id }}: {{ f.title }}</span>
                         <span class="sev sm" [class]="f.severity">{{ f.severity }}</span>
-                      </label>
+                      </div>
                     }
                   }
                 </div>
@@ -414,7 +418,7 @@
               </div>
               <div class="esc-buttons">
                 <button class="btn-red" [disabled]="!canSendEscalation" (click)="sendEscalation()">SEND ESCALATION EMAIL</button>
-                <button class="btn-outline">EXPORT PDF REPORT</button>
+                <button class="btn-outline" disabled title="Coming soon">EXPORT PDF REPORT</button>
               </div>
             </div>
 

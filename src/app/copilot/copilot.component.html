@@ -34,26 +34,114 @@
     <!-- ══════ STEP 1: UPLOAD ══════ -->
     @if (currentStep === 'upload') {
     <div class="step fade">
-      <div class="step-center">
-        @if (!fileUploaded) {
-          <div class="drop-zone" [class.over]="dragOver"
+      <div class="upload-layout">
+        <!-- Left: File Upload -->
+        <div class="upload-left">
+          <h2 class="sec-title">Upload Contracts</h2>
+          <p class="sec-sub">Drag and drop or browse for contract documents</p>
+
+          <div class="drop-zone mini" [class.over]="dragOver"
             (drop)="onFileDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()">
             <span class="material-symbols-rounded drop-icon">cloud_upload</span>
-            <h2>Upload Contract Document</h2>
-            <p>Drag and drop your contract PDF here, or click to browse</p>
-            <button class="btn-outline" (click)="onFileSelect()">Choose File</button>
+            <p>Drop files here or <button class="btn-link" (click)="onFileSelect()">browse</button></p>
+            <span class="drop-formats">PDF, DOCX, CSV, XLSX</span>
           </div>
-        } @else {
-          <div class="upload-success">
-            <span class="material-symbols-rounded success-icon">check_circle</span>
-            <h2>Document Uploaded</h2>
-            <div class="file-info">
-              <span class="material-symbols-rounded">description</span>
-              <span>{{ fileName }}</span>
+
+          @if (uploadedFiles.length) {
+            <h3 class="sec-subtitle" style="margin-top:20px;">Uploaded Documents</h3>
+            <div class="file-list">
+              @for (file of uploadedFiles; track file.name) {
+                <label class="file-row" [class.checked]="file.selected">
+                  <input type="checkbox" [(ngModel)]="file.selected" />
+                  <span class="material-symbols-rounded file-icon">description</span>
+                  <span class="file-name">{{ file.name }}</span>
+                  <button class="file-remove" (click)="removeFile(file); $event.preventDefault()">
+                    <span class="material-symbols-rounded">close</span>
+                  </button>
+                </label>
+              }
             </div>
-            <button class="btn-dark" (click)="nextStep()">NEXT: GENERATE RULES →</button>
+            <span class="file-count">{{ uploadedFiles.length }} files uploaded</span>
+          }
+        </div>
+
+        <!-- Right: Rule Source -->
+        <div class="upload-right">
+          <h2 class="sec-title">Compliance Rule Source</h2>
+          <p class="sec-sub">Choose where to pull compliance rules from</p>
+
+          <div class="source-cards">
+            <div class="source-card" [class.active]="ruleSource==='database'" (click)="ruleSource='database'">
+              <span class="material-symbols-rounded">database</span>
+              <span class="sc-label">Regulation Database</span>
+              <span class="sc-desc">Pre-parsed EU/UK regulations</span>
+            </div>
+            <div class="source-card" [class.active]="ruleSource==='upload'" (click)="ruleSource='upload'">
+              <span class="material-symbols-rounded">upload_file</span>
+              <span class="sc-label">Upload Custom</span>
+              <span class="sc-desc">Your own regulatory docs</span>
+            </div>
+            <div class="source-card" [class.active]="ruleSource==='manual'" (click)="ruleSource='manual'">
+              <span class="material-symbols-rounded">edit_note</span>
+              <span class="sc-label">Manual Entry</span>
+              <span class="sc-desc">Define custom rules</span>
+            </div>
           </div>
-        }
+
+          @if (ruleSource === 'database') {
+            <div class="reg-database">
+              <input class="reg-search" type="text" placeholder="Search regulations…" [(ngModel)]="regulationSearch" />
+              <div class="reg-count">{{ selectedRegCount }} selected · {{ regulations.length }} available in database</div>
+              <div class="reg-list">
+                @for (reg of filteredRegulations; track reg.id) {
+                  <label class="reg-item" [class.selected]="reg.selected" (click)="reg.selected = !reg.selected; $event.preventDefault()">
+                    <span class="material-symbols-rounded reg-check">{{ reg.selected ? 'check_circle' : 'radio_button_unchecked' }}</span>
+                    <div class="reg-info">
+                      <span class="reg-name">{{ reg.label }}</span>
+                      <span class="reg-desc">{{ reg.description }}</span>
+                    </div>
+                    @if (reg.autoSuggested) {
+                      <span class="auto-badge">auto-suggested</span>
+                    }
+                  </label>
+                }
+              </div>
+            </div>
+          }
+
+          @if (ruleSource === 'upload') {
+            <div class="source-panel-content">
+              <div class="drop-zone mini">
+                <span class="material-symbols-rounded drop-icon">upload_file</span>
+                <p>Upload your own regulatory documents or internal compliance policies</p>
+                <span class="drop-formats">PDF, DOCX — system will extract rules automatically</span>
+                <button class="btn-outline" style="margin-top:12px" (click)="ruleSource='database'">
+                  <span class="material-symbols-rounded" style="font-size:16px">arrow_back</span> Back to Database
+                </button>
+              </div>
+            </div>
+          }
+
+          @if (ruleSource === 'manual') {
+            <div class="source-panel-content">
+              <p class="sec-sub" style="margin-bottom:12px">Define your own compliance rules with custom criteria. You can also add custom rules on the next screen.</p>
+              <div class="manual-rule-preview">
+                <div class="crf-fields" style="flex-wrap:wrap">
+                  <input class="crf-input id" placeholder="Rule ID" [(ngModel)]="customRuleForm.id" />
+                  <input class="crf-input title" placeholder="Rule Title" [(ngModel)]="customRuleForm.title" />
+                  <input class="crf-input desc" placeholder="Description / Criteria" [(ngModel)]="customRuleForm.description" />
+                  <button class="btn-outline sm" (click)="addCustomRule()">
+                    <span class="material-symbols-rounded" style="font-size:16px">add</span> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="step-footer-right">
+        <button class="btn-dark" [disabled]="uploadedFiles.length === 0" (click)="nextStep()">NEXT: REVIEW RULES →</button>
       </div>
     </div>
     }
@@ -61,51 +149,108 @@
     <!-- ══════ STEP 2: RULES ══════ -->
     @if (currentStep === 'rules') {
     <div class="step fade">
-      @if (!rulesGenerated) {
-        <div class="step-center">
-          @if (!rulesGenerating) {
-            <button class="btn-dark" (click)="generateRules()">Generate Rules from Regulations</button>
-          } @else {
-            <div class="generating">
-              <div class="spinner"></div>
-              <p>Generating compliance rules from selected regulations…</p>
-            </div>
-          }
+      @if (savedRulesetVisible) {
+        <div class="saved-banner">
+          <span class="material-symbols-rounded">bookmark</span>
+          <span class="saved-banner-text"><strong>Previously saved ruleset found</strong> for DORA (edited by J. Smith on 28 Mar 2026)</span>
+          <button class="btn-outline sm" (click)="loadSavedRuleset()">Load Saved</button>
+          <button class="btn-outline sm" (click)="dismissSavedBanner()">Regenerate</button>
         </div>
       }
-      @if (rulesGenerated) {
-        <h2 class="sec-title">Generated Compliance Rules</h2>
-        <p class="sec-sub">Toggle rules on/off. Click a rule to edit its criteria.</p>
-        <div class="rules-table">
-          <div class="rt-header">
-            <span class="rt-col rt-active">ACTIVE</span>
-            <span class="rt-col rt-id">ID</span>
-            <span class="rt-col rt-title">RULE TITLE</span>
-            <span class="rt-col rt-source">SOURCE</span>
-            <span class="rt-col rt-desc">DESCRIPTION</span>
+
+      <h2 class="sec-title">Compliance Rules</h2>
+      <p class="sec-sub">Toggle rules on/off. Click to edit criteria. Edits are saved for future use.</p>
+
+      <div class="rules-table">
+        <div class="rt-header">
+          <span class="rt-col rt-active">ACTIVE</span>
+          <span class="rt-col rt-id">ID</span>
+          <span class="rt-col rt-title">RULE TITLE</span>
+          <span class="rt-col rt-source">SOURCE</span>
+          <span class="rt-col rt-desc">DESCRIPTION</span>
+        </div>
+        @for (rule of rules; track rule.id) {
+          <div class="rt-row" [class.off]="!rule.active" [class.custom]="rule.id.startsWith('CUST')">
+            <span class="rt-col rt-active">
+              <label class="toggle"><input type="checkbox" [(ngModel)]="rule.active" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+            </span>
+            <span class="rt-col rt-id">{{ rule.id }}</span>
+            <span class="rt-col rt-title fw">{{ rule.title }}</span>
+            <span class="rt-col rt-source">{{ rule.source }}</span>
+            <span class="rt-col rt-desc">{{ rule.description }}</span>
           </div>
-          @for (rule of rules; track rule.id) {
-            <div class="rt-row" [class.off]="!rule.active">
-              <span class="rt-col rt-active">
-                <label class="toggle"><input type="checkbox" [(ngModel)]="rule.active" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
-              </span>
-              <span class="rt-col rt-id">{{ rule.id }}</span>
-              <span class="rt-col rt-title fw">{{ rule.title }}</span>
-              <span class="rt-col rt-source">{{ rule.source }}</span>
-              <span class="rt-col rt-desc">{{ rule.description }}</span>
-            </div>
-          }
+        }
+      </div>
+
+      <!-- Custom rule entry -->
+      <div class="custom-rule-form">
+        <div class="crf-header">
+          <span class="material-symbols-rounded">add_circle_outline</span>
+          <span>Add Custom Rule</span>
         </div>
-        <div class="step-footer-right">
-          <button class="btn-dark" (click)="nextStep()">NEXT: ANALYZE CONTRACTS →</button>
+        <div class="crf-fields">
+          <input class="crf-input id" placeholder="ID (e.g. CUST-2)" [(ngModel)]="customRuleForm.id" />
+          <input class="crf-input title" placeholder="Rule Title" [(ngModel)]="customRuleForm.title" />
+          <input class="crf-input desc" placeholder="Description / Criteria" [(ngModel)]="customRuleForm.description" />
+          <button class="btn-outline sm" (click)="addCustomRule()">
+            <span class="material-symbols-rounded" style="font-size:16px">add</span> Add
+          </button>
         </div>
-      }
+      </div>
+
+      <div class="step-footer-right">
+        <button class="btn-outline">
+          <span class="material-symbols-rounded" style="font-size:16px">save</span> Save Ruleset
+        </button>
+        <button class="btn-dark" (click)="nextStep()">NEXT: ANALYZE CONTRACTS →</button>
+      </div>
     </div>
     }
 
     <!-- ══════ STEP 3: ANALYSIS ══════ -->
     @if (currentStep === 'analysis') {
     <div class="step fade">
+
+      <!-- Risk threshold filters -->
+      <div class="risk-filters">
+        <div class="rf-header">
+          <span class="rf-title">Risk Threshold — Filter Findings</span>
+          <span class="rf-stats">Showing {{ filteredFlags.length }} of {{ flags.length }} findings</span>
+        </div>
+        <div class="rf-sliders">
+          <div class="rf-row">
+            <span class="rf-label">Minimum Likelihood</span>
+            <div class="rf-steps">
+              @for (level of likelihoodLevels; track level; let i = $index) {
+                <button class="rf-step" [class.at-or-above]="i >= minLikelihood" [class.selected]="i === minLikelihood"
+                  [attr.data-idx]="i" (click)="minLikelihood = i">{{ level }}</button>
+              }
+            </div>
+          </div>
+          <div class="rf-row">
+            <span class="rf-label">Minimum Impact</span>
+            <div class="rf-steps">
+              @for (level of impactLevels; track level; let i = $index) {
+                <button class="rf-step" [class.at-or-above]="i >= minImpact" [class.selected]="i === minImpact"
+                  [attr.data-idx]="i" (click)="minImpact = i">{{ level }}</button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contract selector tabs -->
+      <div class="contract-tabs">
+        <button class="ct-tab" [class.active]="selectedContractView === 'all'" (click)="selectedContractView = 'all'">
+          All Contracts ({{ filteredFlags.length }})
+        </button>
+        @for (name of uniqueContractNames; track name) {
+          <button class="ct-tab" [class.active]="selectedContractView === name" (click)="selectedContractView = name">
+            {{ name }}
+          </button>
+        }
+      </div>
+
       <div class="analysis-grid">
         <!-- Left: Contract -->
         <div class="contract-panel">
@@ -114,12 +259,8 @@
             @for (c of contractClauses; track c.num) {
               <p class="clause" [class]="c.highlight">
                 <span class="clause-num">{{ c.num }}.</span>
-                @if (c.highlight === 'violation') {
-                  <span class="hl-bar violation"></span>
-                }
-                @if (c.highlight === 'warning') {
-                  <span class="hl-bar warning"></span>
-                }
+                @if (c.highlight === 'violation') { <span class="hl-bar violation"></span> }
+                @if (c.highlight === 'warning') { <span class="hl-bar warning"></span> }
                 {{ c.text }}
               </p>
             }
@@ -130,22 +271,31 @@
         <div class="flags-panel">
           <h3 class="panel-title">COMPLIANCE CHECK RESULTS</h3>
           <div class="flags-list">
-            @for (f of flags; track f.id) {
+            @for (f of filteredFlagsByView; track f.id) {
               <div class="flag-card">
                 <div class="flag-header">
                   <h4>Flag {{ f.id }} — {{ f.title }}</h4>
                   <span class="sev" [class]="f.severity">{{ f.severity }}</span>
                 </div>
                 <div class="flag-body">
-                  <div class="flag-row"><span class="flag-label">Rule:</span> {{ f.ruleId }} — {{ rules.length > 0 ? f.title : '' }}</div>
+                  <div class="flag-row"><span class="flag-label">Rule:</span> {{ f.ruleId }}</div>
                   <div class="flag-row"><span class="flag-label">Issue:</span> {{ f.issue }}</div>
                   <div class="flag-row"><span class="flag-label">Contract:</span> <em>{{ f.contractRef }}</em></div>
                   @if (f.regulationRef) {
                     <div class="flag-row"><span class="flag-label">Regulation:</span> <em>{{ f.regulationRef }}</em></div>
                   }
-                  <div class="confidence-row">
-                    <span class="conf-label">Confidence: {{ f.confidence }}%</span>
-                    <div class="conf-bar"><div class="conf-fill" [style.width.%]="f.confidence"></div></div>
+                  <div class="flag-row"><span class="flag-label">Source:</span> <em>{{ f.contractName }}</em></div>
+
+                  <!-- Risk assessment -->
+                  <div class="risk-row">
+                    <div class="risk-tag" [attr.data-level]="f.likelihood">
+                      <span class="risk-tag-label">Likelihood</span>
+                      <span class="risk-tag-value">{{ f.likelihood }}</span>
+                    </div>
+                    <div class="risk-tag" [attr.data-level]="f.impact">
+                      <span class="risk-tag-label">Impact</span>
+                      <span class="risk-tag-value">{{ f.impact }}</span>
+                    </div>
                   </div>
                 </div>
                 <div class="flag-actions">
@@ -185,9 +335,6 @@
                 @if (c.highlight === 'violation') { <span class="hl-bar violation"></span> }
                 @if (c.highlight === 'warning') { <span class="hl-bar warning"></span> }
                 {{ c.text }}
-                @if (c.highlight === 'violation') {
-                  <!-- confirmed violation marker -->
-                }
               </p>
             }
           </div>
@@ -201,7 +348,7 @@
             <!-- Risk banner -->
             <div class="risk-banner">
               <span class="risk-amount">{{ totalRisk }}</span>
-              <span class="risk-sub">Total Potential Risk — {{ escalatableFlags.length }} violations × €7M per incident</span>
+              <span class="risk-sub">Total Potential Risk — {{ escalatableFlags.length }} violations across {{ selectedContracts.length }} contracts × €7M per incident</span>
             </div>
 
             <div class="esc-form">
@@ -209,15 +356,32 @@
                 <label>TO: RESPONSIBLE TEAM</label>
                 <div class="esc-select">{{ escalationTeam }}</div>
               </div>
+
+              <!-- Multi-contract attachment -->
               <div class="esc-field">
-                <label>CONTRACT ID</label>
-                <div class="esc-input-display">{{ contractId }}</div>
+                <label>ATTACH CONTRACTS</label>
+                <div class="esc-contracts">
+                  @for (file of uploadedFiles; track file.name) {
+                    <label class="esc-contract-row" (click)="file.selected = !file.selected">
+                      <span class="custom-check" [class.checked]="file.selected">
+                        <span class="material-symbols-rounded">{{ file.selected ? 'check_box' : 'check_box_outline_blank' }}</span>
+                      </span>
+                      <span class="material-symbols-rounded" style="font-size:18px; color:#7c7c96">description</span>
+                      <span class="esc-contract-name">{{ file.name }}</span>
+                      <span class="esc-contract-flags">{{ file.flagCount }} flags</span>
+                    </label>
+                  }
+                </div>
+                <span class="esc-contract-count">{{ selectedContracts.length }} of {{ uploadedFiles.length }} files selected</span>
               </div>
+
+              <!-- Flags grouped by contract -->
               <div class="esc-field">
-                <label>SELECTED FLAGS TO ESCALATE</label>
+                <label>FLAGGED VIOLATIONS</label>
                 <div class="esc-flags">
-                  @for (f of flags; track f.id) {
-                    @if (f.feedback !== 'dismissed') {
+                  @for (name of contractNames; track name) {
+                    <div class="esc-group-header">{{ name }}</div>
+                    @for (f of flagsByContract(name); track f.id) {
                       <label class="esc-flag-row" (click)="f.escalate = !f.escalate">
                         <span class="custom-check" [class.checked]="f.escalate">
                           <span class="material-symbols-rounded">{{ f.escalate ? 'check_box' : 'check_box_outline_blank' }}</span>
@@ -229,6 +393,7 @@
                   }
                 </div>
               </div>
+
               <div class="esc-field">
                 <label>CUSTOM COMMENT</label>
                 <textarea class="esc-textarea" rows="3" placeholder="Add notes for the compliance team…" [(ngModel)]="escalationComment"></textarea>
@@ -255,7 +420,7 @@
             <div class="esc-success">
               <span class="material-symbols-rounded success-icon">check_circle</span>
               <h3>Escalation Sent Successfully</h3>
-              <p>The compliance team has been notified about {{ escalatableFlags.length }} issues in contract {{ contractId }}.</p>
+              <p>The compliance team has been notified about {{ escalatableFlags.length }} issues across {{ selectedContracts.length }} contracts.</p>
               <button class="btn-dark" (click)="nextStep()">NEXT: EVALUATION →</button>
             </div>
           }
@@ -269,27 +434,25 @@
     <div class="step fade">
       <h2 class="sec-title">System Performance</h2>
 
-      <!-- Top metrics -->
       <div class="eval-top-grid">
         <div class="eval-box green-border">
-          <span class="eval-big green">{{ evalMetrics.accuracy }}<small>/{{ evalMetrics.total }}</small></span>
+          <span class="eval-big green">{{ dynamicEvalMetrics.accuracy }}<small>/{{ dynamicEvalMetrics.total }}</small></span>
           <span class="eval-label">Overall Accuracy Score</span>
         </div>
         <div class="eval-box">
-          <span class="eval-big">{{ evalMetrics.findings }}</span>
+          <span class="eval-big">{{ dynamicEvalMetrics.findings }}</span>
           <span class="eval-label">Total Findings</span>
         </div>
         <div class="eval-box">
-          <span class="eval-big green">{{ evalMetrics.agreed }}</span>
+          <span class="eval-big green">{{ dynamicEvalMetrics.agreed }}</span>
           <span class="eval-label">Agreed (True Positives)</span>
         </div>
         <div class="eval-box red-border">
-          <span class="eval-big red">{{ evalMetrics.dismissed }}</span>
+          <span class="eval-big red">{{ dynamicEvalMetrics.dismissed }}</span>
           <span class="eval-label">Dismissed (False Positives)</span>
         </div>
       </div>
 
-      <!-- Comparison table -->
       <h3 class="sec-subtitle">Baseline Comparison: Iris Pipeline vs Raw LLM</h3>
       <div class="cmp-table">
         <div class="cmp-header">
@@ -307,7 +470,6 @@
       </div>
       <p class="cmp-note">↑ Structured pipeline catches 60% more real violations with fewer false alarms</p>
 
-      <!-- Per-Rule Accuracy -->
       <h3 class="sec-subtitle">Per-Rule Accuracy</h3>
       <div class="rule-bars">
         @for (r of perRuleAccuracy; track r.rule) {
@@ -322,7 +484,6 @@
         }
       </div>
 
-      <!-- Ground Truth Upload -->
       <h3 class="sec-subtitle">Ground Truth Upload</h3>
       <div class="ground-truth-box">
         <span class="material-symbols-rounded gt-icon">cloud_upload</span>
@@ -334,4 +495,31 @@
     }
 
   </div>
+
+  <!-- ══════ GLOBAL CHAT ══════ -->
+  <button class="chat-fab" (click)="toggleChat()" [class.open]="chatOpen">
+    <span class="material-symbols-rounded">{{ chatOpen ? 'close' : 'chat' }}</span>
+  </button>
+
+  @if (chatOpen) {
+    <div class="chat-panel">
+      <div class="chat-header">
+        <span class="material-symbols-rounded chat-header-icon">smart_toy</span>
+        <span>{{ chatContextTitle }}</span>
+      </div>
+      <div class="chat-body">
+        @for (msg of chatMessages; track $index) {
+          <div class="chat-msg" [class]="msg.role">
+            <div class="chat-bubble">{{ msg.text }}</div>
+          </div>
+        }
+      </div>
+      <div class="chat-input-bar">
+        <input type="text" class="chat-input" placeholder="Ask about regulations…" [(ngModel)]="chatInput" (keydown.enter)="sendChat()" />
+        <button class="chat-send" (click)="sendChat()">
+          <span class="material-symbols-rounded">send</span>
+        </button>
+      </div>
+    </div>
+  }
 </div>

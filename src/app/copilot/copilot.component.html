@@ -81,11 +81,6 @@
               <span class="sc-label">Upload Custom</span>
               <span class="sc-desc">Your own regulatory docs</span>
             </div>
-            <div class="source-card" [class.active]="ruleSource==='manual'" (click)="ruleSource='manual'">
-              <span class="material-symbols-rounded">edit_note</span>
-              <span class="sc-label">Manual Entry</span>
-              <span class="sc-desc">Define custom rules</span>
-            </div>
           </div>
 
           @if (ruleSource === 'database') {
@@ -115,25 +110,6 @@
                 <span class="material-symbols-rounded drop-icon">upload_file</span>
                 <p>Upload your own regulatory documents or internal compliance policies</p>
                 <span class="drop-formats">PDF, DOCX — system will extract rules automatically</span>
-                <button class="btn-outline" style="margin-top:12px" (click)="ruleSource='database'">
-                  <span class="material-symbols-rounded" style="font-size:16px">arrow_back</span> Back to Database
-                </button>
-              </div>
-            </div>
-          }
-
-          @if (ruleSource === 'manual') {
-            <div class="source-panel-content">
-              <p class="sec-sub" style="margin-bottom:12px">Define your own compliance rules with custom criteria. You can also add custom rules on the next screen.</p>
-              <div class="manual-rule-preview">
-                <div class="crf-fields" style="flex-wrap:wrap">
-                  <input class="crf-input id" placeholder="Rule ID" [(ngModel)]="customRuleForm.id" />
-                  <input class="crf-input title" placeholder="Rule Title" [(ngModel)]="customRuleForm.title" />
-                  <input class="crf-input desc" placeholder="Description / Criteria" [(ngModel)]="customRuleForm.description" />
-                  <button class="btn-outline sm" (click)="addCustomRule()">
-                    <span class="material-symbols-rounded" style="font-size:16px">add</span> Add
-                  </button>
-                </div>
               </div>
             </div>
           }
@@ -257,10 +233,11 @@
           <h3 class="panel-title">ORIGINAL CONTRACT</h3>
           <div class="contract-body">
             @for (c of contractClauses; track c.num) {
-              <p class="clause" [class]="c.highlight">
+              <p class="clause" [class]="getClauseHighlight(c.num)"
+                [class.focus]="isClauseFocused(c.num)">
                 <span class="clause-num">{{ c.num }}.</span>
-                @if (c.highlight === 'violation') { <span class="hl-bar violation"></span> }
-                @if (c.highlight === 'warning') { <span class="hl-bar warning"></span> }
+                @if (getClauseHighlight(c.num) === 'violation') { <span class="hl-bar violation"></span> }
+                @if (getClauseHighlight(c.num) === 'warning') { <span class="hl-bar warning"></span> }
                 {{ c.text }}
               </p>
             }
@@ -269,10 +246,10 @@
 
         <!-- Right: Flags -->
         <div class="flags-panel">
-          <h3 class="panel-title">COMPLIANCE CHECK RESULTS</h3>
+          <h3 class="panel-title">COMPLIANCE FINDINGS</h3>
           <div class="flags-list">
             @for (f of filteredFlagsByView; track f.id) {
-              <div class="flag-card">
+              <div class="flag-card" [class.selected]="selectedFlagId === f.id" (click)="selectFlag(f)">
                 <div class="flag-header">
                   <h4>Flag {{ f.id }} — {{ f.title }}</h4>
                   <span class="sev" [class]="f.severity">{{ f.severity }}</span>
@@ -299,16 +276,12 @@
                   </div>
                 </div>
                 <div class="flag-actions">
-                  @if (f.feedback === 'pending') {
-                    <button class="fa-btn agree" (click)="setFeedback(f,'agreed')"><span class="material-symbols-rounded">check_circle</span> Agree</button>
-                    <button class="fa-btn dismiss" (click)="setFeedback(f,'dismissed')"><span class="material-symbols-rounded">cancel</span> Dismiss</button>
-                    <button class="fa-btn neutral" (click)="setFeedback(f,'neutral')"><span class="material-symbols-rounded">remove_circle_outline</span> Neutral</button>
-                  } @else {
-                    <span class="fa-result" [class]="f.feedback">
-                      <span class="material-symbols-rounded">{{ f.feedback === 'agreed' ? 'verified' : f.feedback === 'dismissed' ? 'block' : 'remove_circle_outline' }}</span>
-                      {{ f.feedback === 'agreed' ? 'Agreed' : f.feedback === 'dismissed' ? 'Dismissed' : 'Neutral' }}
-                    </span>
-                  }
+                  <select class="feedback-select" [class]="f.feedback" [(ngModel)]="f.feedback" (click)="$event.stopPropagation()">
+                    <option value="pending">Pending</option>
+                    <option value="agreed">Agreed</option>
+                    <option value="dismissed">Dismissed</option>
+                    <option value="skipped">Skip</option>
+                  </select>
                 </div>
               </div>
             }
@@ -330,10 +303,10 @@
           <h3 class="panel-title">ORIGINAL CONTRACT — CONFIRMED ISSUES</h3>
           <div class="contract-body compact">
             @for (c of contractClauses; track c.num) {
-              <p class="clause" [class]="c.highlight">
+              <p class="clause" [class]="getClauseHighlight(c.num)">
                 <span class="clause-num">{{ c.num }}.</span>
-                @if (c.highlight === 'violation') { <span class="hl-bar violation"></span> }
-                @if (c.highlight === 'warning') { <span class="hl-bar warning"></span> }
+                @if (getClauseHighlight(c.num) === 'violation') { <span class="hl-bar violation"></span> }
+                @if (getClauseHighlight(c.num) === 'warning') { <span class="hl-bar warning"></span> }
                 {{ c.text }}
               </p>
             }

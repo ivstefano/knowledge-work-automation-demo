@@ -23,9 +23,17 @@ interface Flag {
   confidence: number;
   likelihood: string;
   impact: string;
-  feedback: 'pending' | 'agreed' | 'dismissed' | 'neutral';
+  feedback: 'pending' | 'agreed' | 'dismissed' | 'skipped';
   escalate: boolean;
   contractName: string;
+  contractClauseNum: number;
+  regulationClauseId: string;
+}
+
+interface RegulationClause {
+  id: string;
+  section: string;
+  text: string;
 }
 
 interface AuditEntry { time: string; text: string; }
@@ -79,13 +87,17 @@ export class CopilotComponent {
 
   // ── Upload ──
   dragOver = false;
-  uploadedFiles: UploadedFile[] = [];
+  uploadedFiles: UploadedFile[] = [
+    { name: 'DLC-2026-Alpha.pdf', selected: true, flagCount: 4, type: 'contract', previewText: 'Draft Digital Lending Contract — Decentralized Peer-to-Peer Loan Agreement between Borrower Alpha (0x4fA6...B1cE) and Lender Omega (0x9eD5...C8fF). Principal: 10,000 USDC, Term: 180 Days, Collateral: 5 ETH.' },
+    { name: 'SDALP-v2.1-2026.pdf', selected: true, flagCount: 0, type: 'regulation', previewText: 'Standardized Digital Asset Lending Protocol v2.1 — Industry standard for DeFi lending contracts covering interest rate transparency, liquidation procedures, collateral requirements, and audit obligations.' },
+    { name: 'vendor_registry.xlsx', selected: true, flagCount: 0, type: 'registry', previewText: 'Vendor registry containing counterparty details: Borrower Alpha (High risk), Lender Omega (Medium risk), Liquidation Agent (Low risk).' },
+  ];
   previewFile: UploadedFile | null = null;
   ruleSource: 'database' | 'upload' | 'manual' = 'database';
   regulationSearch = '';
   regulations: Regulation[] = [
     { id: 'SDALP', label: 'SDALP', description: 'Standardized Digital Asset Lending Protocol', selected: true, autoSuggested: true },
-    { id: 'DORA', label: 'DORA', description: 'Digital Operational Resilience Act', selected: false, autoSuggested: false },
+    { id: 'DORA', label: 'DORA', description: 'Digital Operational Resilience Act', selected: false, autoSuggested: true },
     { id: 'EU_AI', label: 'EU AI Act', description: 'Classification & Transparency Rules', selected: false, autoSuggested: false },
     { id: 'CONSUMER', label: 'Consumer Rights Directive', description: 'EU Consumer Protection Law', selected: false, autoSuggested: false },
     { id: 'GDPR', label: 'GDPR', description: 'General Data Protection Regulation', selected: false, autoSuggested: false },
@@ -119,63 +131,77 @@ export class CopilotComponent {
 
   // ── Contract text (from DLC-2026-Alpha) ──
   contractClauses = [
-    { num: 1, text: 'Draft Digital Lending Contract (DLC-2026-Alpha). Decentralized Peer-to-Peer Loan Agreement. Effective Date: 2 April 2026. Borrower: 0x4fA6...B1cE (Borrower Alpha). Lender: 0x9eD5...C8fF (Lender Omega).', highlight: '' },
-    { num: 2, text: '§1.1 Principal and Term — Principal Asset: 10,000 USDC. Term: 180 Days. Repayment Asset: USDC.', highlight: '' },
-    { num: 3, text: '§1.2 Interest Rate — The annual interest rate is set at 10% APR, compounded hourly. The interest rate is subject to dynamic adjustment by the Lender\'s governance mechanism (0x1A2B...3C4D). Adjustments may occur immediately upon governance consensus.', highlight: 'violation' },
-    { num: 4, text: '§1.3 Collateral — Collateral Asset: 5 ETH. Collateral Deposit Address: 0x4fA6...B1cE (Locked in Smart Contract Escrow).', highlight: '' },
-    { num: 5, text: '§2.1 LTV and Liquidation Threshold — LTV at Origination: based on ETH/USDC price feed. Liquidation Threshold: 85% LTV.', highlight: '' },
-    { num: 6, text: '§2.2 Liquidation Procedure — If LTV exceeds 85%, the Smart Contract will IMMEDIATELY initiate sale of Collateral Asset (ETH) via public AMM pool. No grace period specified.', highlight: 'violation' },
-    { num: 7, text: '§2.3 Fees — A liquidation fee of 1% of the sold collateral value will be deducted and paid to the Liquidation Agent.', highlight: '' },
-    { num: 8, text: '§3 Governing Clause — Borrower warrants 5 ETH collateral represents 100% of assets used as collateral. Contract allows addition of further collateral only with written consent, overriding any pool diversification requirements.', highlight: 'violation' },
-    { num: 9, text: '§4 Audit — This DLC has not yet been submitted for an independent security audit but is pending internal review.', highlight: 'warning' },
+    { num: 1, text: 'Draft Digital Lending Contract (DLC-2026-Alpha). Decentralized Peer-to-Peer Loan Agreement. Effective Date: 2 April 2026. Borrower: 0x4fA6...B1cE (Borrower Alpha). Lender: 0x9eD5...C8fF (Lender Omega).' },
+    { num: 2, text: '§1.1 Principal and Term — Principal Asset: 10,000 USDC. Term: 180 Days. Repayment Asset: USDC.' },
+    { num: 3, text: '§1.2 Interest Rate — The annual interest rate is set at 10% APR, compounded hourly. The interest rate is subject to dynamic adjustment by the Lender\'s governance mechanism (0x1A2B...3C4D). Adjustments may occur immediately upon governance consensus.' },
+    { num: 4, text: '§1.3 Collateral — Collateral Asset: 5 ETH. Collateral Deposit Address: 0x4fA6...B1cE (Locked in Smart Contract Escrow).' },
+    { num: 5, text: '§2.1 LTV and Liquidation Threshold — LTV at Origination: based on ETH/USDC price feed. Liquidation Threshold: 85% LTV.' },
+    { num: 6, text: '§2.2 Liquidation Procedure — If LTV exceeds 85%, the Smart Contract will IMMEDIATELY initiate sale of Collateral Asset (ETH) via public AMM pool. No grace period specified.' },
+    { num: 7, text: '§2.3 Fees — A liquidation fee of 1% of the sold collateral value will be deducted and paid to the Liquidation Agent.' },
+    { num: 8, text: '§3 Governing Clause — Borrower warrants 5 ETH collateral represents 100% of assets used as collateral. Contract allows addition of further collateral only with written consent, overriding any pool diversification requirements.' },
+    { num: 9, text: '§4 Audit — This DLC has not yet been submitted for an independent security audit but is pending internal review.' },
+  ];
+
+  // ── Regulation text (from SDALP v2.1) ──
+  regulationClauses: RegulationClause[] = [
+    { id: 'SDALP-2.1.1', section: '§2.1.1', text: 'Interest Rate Transparency — DLC MUST specify exact formula for interest rate calculation. Variable rates MUST include: (a) 72-hour advance notice to borrower before any rate change, (b) a hard-coded interest rate cap in the smart contract, (c) public on-chain governance vote record for any adjustment.' },
+    { id: 'SDALP-2.1.2', section: '§2.1.2', text: 'Liquidation Grace Period — A mandatory 48-hour grace period SHALL apply after the Loan-to-Value ratio crosses the liquidation threshold. During this period: (a) the borrower MUST be notified via on-chain event, (b) the borrower MAY deposit additional collateral, (c) NO liquidation action may commence.' },
+    { id: 'SDALP-2.2', section: '§2.2', text: 'Security Audit Requirement — All Digital Lending Contracts MUST complete an independent security audit by a certified blockchain auditor before deployment. The audit report MUST be publicly linked on-chain and include: scope, methodology, findings, and remediation status.' },
+    { id: 'SDALP-2.3.1', section: '§2.3.1', text: 'Collateral Diversification — Single collateral asset SHALL NOT exceed 90% of total assets in the contract pool. Contracts accepting single-asset collateral MUST include automated rebalancing triggers or explicit regulatory exemption documentation.' },
+    { id: 'SDALP-3.1', section: '§3.1', text: 'Governance Safeguards — Any governance mechanism with authority to modify contract terms MUST require: (a) multi-signature approval (minimum 3-of-5), (b) 7-day timelock on parameter changes, (c) borrower notification and opt-out window before changes take effect.' },
   ];
 
   // ── Analysis ──
   likelihoodLevels = ['Rare', 'Unlikely', 'Moderate', 'Likely', 'Very Likely'] as const;
   impactLevels = ['Trivial', 'Minor', 'Moderate', 'Major', 'Extreme'] as const;
-  minLikelihood = 0;
-  minImpact = 0;
+  minLikelihood = 2;
+  minImpact = 2;
 
   flags: Flag[] = [
     {
-      id: 1, title: 'Missing Transparency Clause', ruleId: 'EUAI-1', severity: 'high',
-      issue: 'Vendor explicitly refuses to disclose AI methodology — violates transparency requirements for high-risk AI systems.',
-      contractRef: '§4: "shall not be required to disclose the methodology..."',
-      regulationRef: '"Providers of high-risk AI systems shall ensure transparency..."',
-      confidence: 94, likelihood: 'Very Likely', impact: 'Extreme',
-      feedback: 'pending', escalate: true, contractName: 'GOV-UK-2024-AI-001.pdf',
+      id: 1, title: 'Interest Rate Not Transparent', ruleId: 'SDALP-2.1.1', severity: 'high',
+      issue: 'Interest rate is subject to immediate dynamic adjustment by governance mechanism without 72h notice or hard-coded cap — violates SDALP §2.1.1.',
+      contractRef: '§1.2: "subject to dynamic adjustment by the Lender\'s governance mechanism... Adjustments may occur immediately"',
+      regulationRef: 'SDALP §2.1.1: "Variable rates require 72h notice and a hard-coded cap"',
+      confidence: 96, likelihood: 'Very Likely', impact: 'Extreme',
+      feedback: 'pending', escalate: true, contractName: 'DLC-2026-Alpha.pdf',
+      contractClauseNum: 3, regulationClauseId: 'SDALP-2.1.1',
     },
     {
-      id: 2, title: 'Late Incident Reporting', ruleId: 'DORA-3', severity: 'high',
-      issue: '30 business days notification window far exceeds DORA\'s "without undue delay" requirement.',
-      contractRef: '§6: "notify the Client within 30 business days"',
-      regulationRef: '"shall report major ICT-related incidents without undue delay"',
-      confidence: 91, likelihood: 'Likely', impact: 'Major',
-      feedback: 'pending', escalate: true, contractName: 'GOV-UK-2024-AI-001.pdf',
+      id: 2, title: 'No Liquidation Grace Period', ruleId: 'SDALP-2.1.2', severity: 'high',
+      issue: 'Contract specifies IMMEDIATE liquidation with no grace period — directly violates mandatory 48-hour grace period requirement.',
+      contractRef: '§2.2: "Smart Contract will IMMEDIATELY initiate sale... No grace period specified"',
+      regulationRef: 'SDALP §2.1.2: "Mandatory 48-hour grace period after LTV crosses threshold"',
+      confidence: 98, likelihood: 'Very Likely', impact: 'Extreme',
+      feedback: 'pending', escalate: true, contractName: 'DLC-2026-Alpha.pdf',
+      contractClauseNum: 6, regulationClauseId: 'SDALP-2.1.2',
     },
     {
-      id: 3, title: 'Insufficient Data Retention', ruleId: 'EUAI-2', severity: 'medium',
-      issue: '12-month retention may not meet regulatory minimum for AI training data records.',
-      contractRef: '§3: "stored for a period of 12 months"',
-      regulationRef: '"Training data records shall be maintained for the operational lifetime of the system"',
-      confidence: 76, likelihood: 'Moderate', impact: 'Moderate',
-      feedback: 'pending', escalate: true, contractName: 'GOV-UK-2024-AI-001.pdf',
+      id: 3, title: 'Security Audit Missing', ruleId: 'SDALP-2.2', severity: 'medium',
+      issue: 'Contract has not been submitted for independent security audit — only "pending internal review" is mentioned.',
+      contractRef: '§4: "has not yet been submitted for an independent security audit but is pending internal review"',
+      regulationRef: 'SDALP §2.2: "All DLCs MUST complete independent security audit. Audit report MUST be publicly linked"',
+      confidence: 92, likelihood: 'Likely', impact: 'Major',
+      feedback: 'pending', escalate: true, contractName: 'DLC-2026-Alpha.pdf',
+      contractClauseNum: 9, regulationClauseId: 'SDALP-2.2',
     },
     {
-      id: 4, title: 'No ICT Risk Framework', ruleId: 'DORA-1', severity: 'medium',
-      issue: 'No explicit reference to operational resilience testing or ICT risk framework.',
-      contractRef: '§8: No reference found',
-      regulationRef: '"Financial entities shall have in place an ICT risk management framework"',
-      confidence: 62, likelihood: 'Unlikely', impact: 'Major',
-      feedback: 'pending', escalate: false, contractName: 'GOV-UK-2024-AI-001.pdf',
+      id: 4, title: 'Collateral Concentration Risk', ruleId: 'SDALP-2.3.1', severity: 'high',
+      issue: 'Collateral is 100% single asset (ETH) and contract explicitly overrides diversification requirements.',
+      contractRef: '§3: "5 ETH collateral represents 100% of assets... overriding any pool diversification requirements"',
+      regulationRef: 'SDALP §2.3.1: "Single collateral asset SHALL NOT exceed 90% of total assets"',
+      confidence: 95, likelihood: 'Very Likely', impact: 'Major',
+      feedback: 'pending', escalate: true, contractName: 'DLC-2026-Alpha.pdf',
+      contractClauseNum: 8, regulationClauseId: 'SDALP-2.3.1',
     },
     {
-      id: 5, title: 'No Audit Clause', ruleId: 'DORA-2', severity: 'high',
-      issue: 'Contract does not include audit rights for third-party ICT service providers.',
-      contractRef: 'No audit clause found',
-      regulationRef: '"Financial entities shall ensure contractual arrangements include audit rights"',
-      confidence: 88, likelihood: 'Likely', impact: 'Extreme',
-      feedback: 'pending', escalate: true, contractName: 'GOV-UK-2024-AI-002.pdf',
+      id: 5, title: 'Unilateral Governance Override', ruleId: 'CUST-1', severity: 'medium',
+      issue: 'Governance mechanism (0x1A2B...3C4D) can unilaterally modify interest rate terms without borrower consent.',
+      contractRef: '§1.2: "dynamic adjustment by the Lender\'s governance mechanism (0x1A2B...3C4D)"',
+      regulationRef: 'Custom Rule: "Any governance mechanism that can unilaterally modify contract terms must be flagged"',
+      confidence: 89, likelihood: 'Likely', impact: 'Major',
+      feedback: 'pending', escalate: false, contractName: 'DLC-2026-Alpha.pdf',
+      contractClauseNum: 3, regulationClauseId: 'SDALP-3.1',
     },
   ];
 
@@ -193,11 +219,11 @@ export class CopilotComponent {
   escalationSent = false;
 
   auditTrail: AuditEntry[] = [
-    { time: '14:32', text: 'Contracts uploaded by I. Wight' },
-    { time: '14:33', text: 'DORA + EU AI Act selected as regulatory sources' },
-    { time: '14:33', text: '7 compliance rules loaded (1 custom), 1 disabled by user' },
-    { time: '14:34', text: 'Analysis complete — 5 findings flagged across 2 contracts' },
-    { time: '14:35', text: 'User agreed with Flag 1, 2, 3, 5. Dismissed Flag 4.' },
+    { time: '14:32', text: 'DLC-2026-Alpha.pdf + SDALP-v2.1-2026.pdf uploaded' },
+    { time: '14:33', text: 'SDALP selected as primary regulatory source' },
+    { time: '14:33', text: '5 compliance rules loaded (1 custom), all active' },
+    { time: '14:34', text: 'Analysis complete — 5 findings flagged in DLC-2026-Alpha' },
+    { time: '14:35', text: 'User agreed with Flag 1, 2, 3, 4. Dismissed Flag 5.' },
     { time: '14:36', text: 'Escalation initiated to Legal / Compliance Team' },
   ];
 
@@ -220,11 +246,11 @@ export class CopilotComponent {
     { metric: 'Precision', pipeline: '73%', baseline: '42%' },
   ];
   perRuleAccuracy = [
-    { rule: 'DORA-3 Incident Reporting', correct: 5, total: 5, color: '#4ade80' },
-    { rule: 'EUAI-1 AI Classification', correct: 4, total: 5, color: '#4ade80' },
-    { rule: 'EUAI-2 Data Governance', correct: 2, total: 3, color: '#facc15' },
-    { rule: 'DORA-1 ICT Risk Mgmt', correct: 1, total: 4, color: '#f87171' },
-    { rule: 'DORA-2 Third-Party Risk', correct: 3, total: 4, color: '#4ade80' },
+    { rule: 'SDALP-2.1.1 Interest Rate Transparency', correct: 5, total: 5, color: '#4ade80' },
+    { rule: 'SDALP-2.1.2 Liquidation Grace Period', correct: 5, total: 5, color: '#4ade80' },
+    { rule: 'SDALP-2.2 Security Audit', correct: 4, total: 5, color: '#4ade80' },
+    { rule: 'SDALP-2.3.1 Collateral Diversification', correct: 3, total: 4, color: '#facc15' },
+    { rule: 'CUST-1 Governance Override', correct: 3, total: 4, color: '#4ade80' },
   ];
 
   // ── Chat ──
@@ -238,14 +264,14 @@ export class CopilotComponent {
     switch (this.currentStep) {
       case 'upload': return 'Upload Assistant';
       case 'rules': return 'Rules Advisor';
-      case 'analysis': return 'Analysis — DORA & EU AI Act';
+      case 'analysis': return 'Analysis — SDALP Compliance';
       case 'escalation': return 'Escalation Helper';
       case 'evaluation': return 'Evaluation Insights';
     }
   }
 
   // ── Analysis contract selector ──
-  selectedContractView = 'GOV-UK-2024-AI-001.pdf';
+  selectedContractView = 'DLC-2026-Alpha.pdf';
 
   // ── Computed ──
   get activeRuleCount(): number { return this.rules.filter(r => r.active).length; }
@@ -257,11 +283,41 @@ export class CopilotComponent {
     return this.filteredFlags.filter(f => f.contractName === this.selectedContractView || this.selectedContractView === 'all');
   }
 
+  // Dynamic highlights based on filtered flags
+  get flaggedContractClauseNums(): Set<number> {
+    return new Set(this.filteredFlagsByView.map(f => f.contractClauseNum));
+  }
+  get flaggedRegulationClauseIds(): Set<string> {
+    return new Set(this.filteredFlagsByView.map(f => f.regulationClauseId));
+  }
+  getClauseHighlight(clauseNum: number): string {
+    const matching = this.filteredFlagsByView.filter(f => f.contractClauseNum === clauseNum);
+    if (matching.length === 0) return '';
+    return matching.some(f => f.severity === 'high') ? 'violation' : 'warning';
+  }
+  getRegHighlight(clauseId: string): string {
+    const matching = this.filteredFlagsByView.filter(f => f.regulationClauseId === clauseId);
+    if (matching.length === 0) return '';
+    return matching.some(f => f.severity === 'high') ? 'violation' : 'warning';
+  }
+  selectedFlagId: number | null = null;
+  selectFlag(f: Flag) {
+    this.selectedFlagId = this.selectedFlagId === f.id ? null : f.id;
+  }
+  isClauseFocused(clauseNum: number): boolean {
+    if (this.selectedFlagId === null) return false;
+    return this.filteredFlagsByView.some(f => f.id === this.selectedFlagId && f.contractClauseNum === clauseNum);
+  }
+  isRegFocused(clauseId: string): boolean {
+    if (this.selectedFlagId === null) return false;
+    return this.filteredFlagsByView.some(f => f.id === this.selectedFlagId && f.regulationClauseId === clauseId);
+  }
+
   // ── Dynamic eval metrics ──
   get dynamicEvalMetrics() {
     const agreed = this.flags.filter(f => f.feedback === 'agreed').length;
     const dismissed = this.flags.filter(f => f.feedback === 'dismissed').length;
-    const neutral = this.flags.filter(f => f.feedback === 'neutral').length;
+    const neutral = this.flags.filter(f => f.feedback === 'skipped').length;
     const reviewed = agreed + dismissed + neutral;
     const accuracy = reviewed > 0 ? ((agreed / reviewed) * 5).toFixed(1) : this.evalMetrics.accuracy;
     return {
@@ -285,7 +341,7 @@ export class CopilotComponent {
     for (const n of names) {
       if (!this.uploadedFiles.find(f => f.name === n)) {
         const flagCount = this.flags.filter(f => f.contractName === n).length;
-        this.uploadedFiles.push({ name: n, selected: true, flagCount });
+        this.uploadedFiles.push({ name: n, selected: true, flagCount, type: 'contract', previewText: '' });
       }
     }
   }
@@ -295,12 +351,12 @@ export class CopilotComponent {
   onFileDrop(e: DragEvent) {
     e.preventDefault();
     this.dragOver = false;
-    this.addFiles(['GOV-UK-2024-AI-001.pdf', 'GOV-UK-2024-AI-002.pdf']);
+    this.addFiles(['DLC-2026-Alpha.pdf', 'SDALP-v2.1-2026.pdf']);
   }
   onDragOver(e: DragEvent) { e.preventDefault(); this.dragOver = true; }
   onDragLeave() { this.dragOver = false; }
   onFileSelect() {
-    this.addFiles(['GOV-UK-2024-AI-001.pdf', 'GOV-UK-2024-AI-002.pdf', 'vendor_registry.xlsx']);
+    this.addFiles(['DLC-2026-Alpha.pdf', 'SDALP-v2.1-2026.pdf', 'vendor_registry.xlsx']);
   }
 
   // Rules
@@ -320,7 +376,7 @@ export class CopilotComponent {
   }
 
   // Analysis
-  setFeedback(flag: Flag, fb: 'agreed' | 'dismissed' | 'neutral') {
+  setFeedback(flag: Flag, fb: 'agreed' | 'dismissed' | 'skipped') {
     flag.feedback = fb;
     if (fb === 'dismissed') flag.escalate = false;
   }

@@ -503,6 +503,12 @@ $rs: 8px;
   &:focus { border-color:$cyan; box-shadow:0 0 0 3px rgba($cyan,.08); }
 }
 .esc-buttons { display:flex; gap:10px; margin-top:4px; }
+.esc-empty-state {
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  text-align:center; padding:40px 20px;
+  background:$s1; border:1px solid $b1; border-radius:$r;
+  h4 { margin:0; font-size:16px; }
+}
 
 .audit-section { margin-top:28px; h4 { font-size:14px; font-weight:700; margin:0 0 12px; } }
 .audit-list { display:flex; flex-direction:column; gap:3px; }

@@ -321,7 +321,8 @@ export class CopilotComponent {
   get selectedEscalationFiles(): UploadedFile[] { return this.flaggedFiles.filter(f => f.selected); }
   get totalRisk(): string {
     const count = this.escalatableFlags.length;
-    return '€' + (count * 7).toLocaleString() + ',000,000';
+    if (count === 0) return '€0';
+    return '€' + (count * 7_000_000).toLocaleString();
   }
   get contractNames(): string[] {
     return [...new Set(this.escalatableFlags.map(f => f.contractName))];
@@ -476,7 +477,10 @@ export class CopilotComponent {
   }
 
   // Escalation
-  sendEscalation() { this.escalationSent = true; }
+  sendEscalation() {
+    this.escalationSent = true;
+    setTimeout(() => this.nextStep(), 1500);
+  }
 
   // Chat
   toggleChat() { this.chatOpen = !this.chatOpen; }

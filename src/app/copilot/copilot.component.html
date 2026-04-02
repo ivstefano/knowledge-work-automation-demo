@@ -43,7 +43,7 @@
           <div class="drop-zone mini" [class.over]="dragOver"
             (drop)="onFileDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()">
             <span class="material-symbols-rounded drop-icon">cloud_upload</span>
-            <p>Drop files here or <button class="btn-link" (click)="onFileSelect()">browse</button></p>
+            <p>Drop files here or <button class="btn-link" (click)="onFileSelect()">select from computer</button></p>
             <span class="drop-formats">PDF, DOCX, CSV, XLSX</span>
           </div>
 
@@ -323,11 +323,22 @@
           <h3 class="panel-title">ESCALATION</h3>
 
           @if (!escalationSent) {
+            @if (escalatableFlags.length > 0) {
             <!-- Risk banner -->
             <div class="risk-banner">
               <span class="risk-amount">{{ totalRisk }}</span>
               <span class="risk-sub">Total Potential Risk — {{ escalatableFlags.length }} violations across {{ selectedEscalationFiles.length }} contracts × €7M per incident</span>
             </div>
+            }
+
+            @if (escalatableFlags.length === 0) {
+              <div class="esc-empty-state">
+                <span class="material-symbols-rounded" style="font-size:40px; color:#4a4a62">check_circle</span>
+                <h4>No Violations Require Escalation</h4>
+                <p class="sec-sub">All findings were dismissed or skipped. No escalation needed.</p>
+                <button class="btn-dark" (click)="nextStep()">PROCEED TO EVALUATION →</button>
+              </div>
+            }
 
             <div class="esc-form">
               <!-- Responsible teams multiselect -->

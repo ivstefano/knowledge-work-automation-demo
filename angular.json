@@ -29,6 +29,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "intro.html",
+                "input": "src",
+                "output": "/"
               }
             ],
             "styles": [

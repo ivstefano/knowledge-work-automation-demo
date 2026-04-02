@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit & Furious</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #07070c;
+    color: #e8e8f0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .container {
+    max-width: 960px;
+    padding: 48px;
+    text-align: center;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #22d3ee;
+    background: rgba(34, 211, 238, 0.06);
+    border: 1px solid rgba(34, 211, 238, 0.15);
+    padding: 8px 20px;
+    border-radius: 20px;
+    margin-bottom: 32px;
+    animation: fadeIn 0.8s ease both;
+  }
+
+  .title {
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 40px;
+    animation: fadeIn 0.8s ease 0.2s both;
+  }
+  .title .highlight {
+    background: linear-gradient(135deg, #22d3ee, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .pain {
+    font-size: 19px;
+    line-height: 1.8;
+    color: #7c7c96;
+    max-width: 780px;
+    margin: 0 auto 48px;
+    animation: fadeIn 0.8s ease 0.4s both;
+  }
+
+  .stat-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px 56px;
+    border: 1px solid rgba(248, 113, 113, 0.25);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.04), rgba(251, 146, 60, 0.02));
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.8s ease 0.6s both;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #f87171, #fb923c);
+  }
+  .stat-amount {
+    font-size: 64px;
+    font-weight: 900;
+    color: #f87171;
+    letter-spacing: -2px;
+    text-shadow: 0 0 40px rgba(248, 113, 113, 0.2);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: #7c7c96;
+    font-weight: 600;
+  }
+
+  .manual {
+    font-size: 17px;
+    line-height: 1.8;
+    color: #4a4a62;
+    max-width: 700px;
+    margin: 0 auto 56px;
+    animation: fadeIn 0.8s ease 0.8s both;
+  }
+  .manual strong {
+    color: #7c7c96;
+  }
+
+  .question {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.5;
+    max-width: 740px;
+    margin: 0 auto;
+    animation: fadeIn 0.8s ease 1.0s both;
+  }
+  .question .time-old {
+    color: #f87171;
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    opacity: 0.7;
+  }
+  .question .time-new {
+    color: #4ade80;
+  }
+
+  .footer {
+    margin-top: 64px;
+    font-size: 11px;
+    color: #1e1e2e;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+    animation: fadeIn 0.8s ease 1.2s both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="badge">Knowledge Work Automation &middot; FSI</div>
+
+  <h1 class="title">
+    <span class="highlight">Audit & Furious</span>
+  </h1>
+
+  <p class="pain">
+    Every financial institution in the EU has a ticking clock. DORA, EU AI Act, MiFID II &mdash;
+    new regulations are stacking up. A single compliance officer has to read a 40-page contract,
+    cross-reference it against 5 different regulatory frameworks, flag violations, quantify risk,
+    and escalate &mdash; all before the next one lands on their desk.
+  </p>
+
+  <div class="stat-card">
+    <span class="stat-amount">&euro;7,000,000</span>
+    <span class="stat-label">per non-compliance incident &middot; or 3% of global annual turnover</span>
+  </div>
+
+  <p class="manual">
+    Today, this process is entirely manual. <strong>Open contract. Open regulation. Read. Compare.
+    Flag. Write an email. Repeat.</strong> It takes days per contract. It doesn't scale.
+    And when it fails, it fails quietly &mdash; until a regulator finds the gap.
+  </p>
+
+  <p class="question">
+    What if a compliance officer could do this in
+    <span class="time-new">15 minutes</span> instead of
+    <span class="time-old">3 days</span>
+    &mdash; with a full audit trail proving every decision?
+  </p>
+
+  <p class="footer">Press any key to continue to demo</p>
+</div>
+
+<script>
+  document.addEventListener('keydown', () => {
+    window.location.href = '/';
+  });
+  document.addEventListener('click', () => {
+    window.location.href = '/';
+  });
+</script>
+
+</body>
+</html>

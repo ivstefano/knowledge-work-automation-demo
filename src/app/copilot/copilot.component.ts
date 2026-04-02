@@ -487,15 +487,19 @@ export class CopilotComponent {
   sendChat() {
     if (!this.chatInput.trim()) return;
     this.chatMessages.push({ role: 'user', text: this.chatInput });
-    const q = this.chatInput;
+    const q = this.chatInput.toLowerCase();
     this.chatInput = '';
     setTimeout(() => {
-      if (q.toLowerCase().includes('dora') || q.toLowerCase().includes('incident')) {
-        this.chatMessages.push({ role: 'assistant', text: 'Under DORA Article 19, "without undue delay" for major ICT incidents means initial notification within 4 hours of classification, with an intermediate report within 72 hours. The contract\'s 30 business days significantly exceeds this requirement.' });
-      } else if (q.toLowerCase().includes('compliant') || q.toLowerCase().includes('clause')) {
-        this.chatMessages.push({ role: 'assistant', text: 'A compliant clause would state: "The Vendor shall notify the Client of any major ICT-related incident within 4 hours of classification as major, with an intermediate report within 72 hours containing initial analysis and remediation measures."' });
+      if (q.includes('interest') || q.includes('rate') || q.includes('transparency')) {
+        this.chatMessages.push({ role: 'assistant', text: 'Under SDALP §2.1.1, variable interest rates require 72-hour advance notice, a hard-coded cap in the smart contract, and a public on-chain governance vote. DLC-2026-Alpha allows immediate adjustment by governance mechanism (0x1A2B...3C4D) without any of these safeguards — this is the highest-severity finding.' });
+      } else if (q.includes('liquidation') || q.includes('grace')) {
+        this.chatMessages.push({ role: 'assistant', text: 'SDALP §2.1.2 mandates a 48-hour grace period after LTV crosses the liquidation threshold. The borrower must be notified via on-chain event and may deposit additional collateral. DLC-2026-Alpha specifies immediate liquidation with no grace period — a direct violation.' });
+      } else if (q.includes('compliant') || q.includes('clause') || q.includes('fix')) {
+        this.chatMessages.push({ role: 'assistant', text: 'A compliant interest rate clause would state: "The annual interest rate is fixed at 10% APR. Any adjustment requires 72-hour advance on-chain notice, governance vote with minimum 3-of-5 approval, and shall not exceed the hard-coded cap of 15% APR embedded in the smart contract."' });
+      } else if (q.includes('collateral') || q.includes('diversif')) {
+        this.chatMessages.push({ role: 'assistant', text: 'SDALP §2.3.1 requires that no single collateral asset exceeds 90% of the pool. DLC-2026-Alpha uses 100% ETH as collateral and explicitly overrides diversification requirements in §3 — this violates the regulation and concentrates risk.' });
       } else {
-        this.chatMessages.push({ role: 'assistant', text: 'Based on the current regulatory context and your uploaded contracts, I recommend reviewing the flagged clauses against the specific articles mentioned in each finding. Would you like me to explain a specific regulation in more detail?' });
+        this.chatMessages.push({ role: 'assistant', text: 'Based on the SDALP analysis of DLC-2026-Alpha, I identified 13 potential compliance issues. The most critical are the missing liquidation grace period (§2.2) and uncontrolled interest rate adjustments (§1.2). Would you like me to explain a specific finding?' });
       }
     }, 600);
   }

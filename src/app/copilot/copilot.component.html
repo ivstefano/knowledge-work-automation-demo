@@ -74,7 +74,7 @@
             <div class="source-card" [class.active]="ruleSource==='database'" (click)="ruleSource='database'">
               <span class="material-symbols-rounded">database</span>
               <span class="sc-label">Regulation Database</span>
-              <span class="sc-desc">Pre-parsed EU/UK regulations</span>
+              <span class="sc-desc">Pre-parsed financial regulations</span>
             </div>
             <div class="source-card" [class.active]="ruleSource==='upload'" (click)="ruleSource='upload'">
               <span class="material-symbols-rounded">upload_file</span>
@@ -128,7 +128,7 @@
       @if (savedRulesetVisible) {
         <div class="saved-banner">
           <span class="material-symbols-rounded">bookmark</span>
-          <span class="saved-banner-text"><strong>Previously saved ruleset found</strong> for DORA (edited by J. Smith on 28 Mar 2026)</span>
+          <span class="saved-banner-text"><strong>Previously saved ruleset found</strong> for SDALP (edited by J. Smith on 28 Mar 2026)</span>
           <button class="btn-outline sm" (click)="loadSavedRuleset()">Load Saved</button>
           <button class="btn-outline sm" (click)="dismissSavedBanner()">Regenerate</button>
         </div>

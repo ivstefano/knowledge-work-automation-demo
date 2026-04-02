@@ -431,10 +431,19 @@ export class CopilotComponent {
   }
 
   // ── Methods ──
-  goTo(step: Step) { this.currentStep = step; }
+  goTo(step: Step) {
+    const target = this.steps.findIndex(s => s.key === step);
+    if (target <= this.stepIndex) {
+      if (this.currentStep === 'escalation') this.escalationSent = false;
+      this.currentStep = step;
+    }
+  }
   nextStep() {
     const i = this.stepIndex;
-    if (i < this.steps.length - 1) this.currentStep = this.steps[i + 1].key;
+    if (i < this.steps.length - 1) {
+      if (this.currentStep === 'escalation') this.escalationSent = false;
+      this.currentStep = this.steps[i + 1].key;
+    }
   }
 
   // Upload
